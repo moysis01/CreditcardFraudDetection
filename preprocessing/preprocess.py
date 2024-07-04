@@ -8,7 +8,8 @@ logger = setup_logger(__name__)
 
 def load_data(file_path):
     logger.info("Loading data from file: %s", file_path)
-    df = pd.read_csv(file_path)
+    df = pd.read_csv(file_path)  
+    #df = df.sample(frac=0.10, random_state=1)# Load only 10% of the data for testing
     logger.info("Data loaded. Shape: %s", df.shape)
     return df
 
