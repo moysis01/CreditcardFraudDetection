@@ -1,5 +1,6 @@
 import json
-from utils import setup_logger
+import logging
+from utils import setup_logger, log_memory_usage
 from preprocessing import load_data, preprocess_data
 from models.classifiers import train_and_evaluate, plot_roc_pr_curves, hyperparameter_tuning, cross_validate_models
 from models.ensemble import train_and_evaluate_voting_classifier
@@ -29,18 +30,19 @@ if __name__ == "__main__":
         df = load_data('data/creditcard.csv')
 
         logger.info("Preprocessing data...")
-        X_train, X_test, y_train, y_test = preprocess_data(df)
+        X_train, X_test, y_train, y_test, X, y = preprocess_data(df)
+
+        best_estimators = {}
+        if config.get('hyperparameter_tuning'):
+            logger.info("Hyperparameter tuning...")
+            best_estimators = hyperparameter_tuning(X_train, y_train, config, logger)
 
         if config.get('cross_validation'):
             logger.info("Cross-validating models...")
-            cross_validate_models(X_train, y_train, config)
-
-        if config.get('hyperparameter_tuning'):
-            logger.info("Hyperparameter tuning...")
-            hyperparameter_tuning(X_train, y_train, config)
+            cross_validate_models(X, y, config, logger, best_estimators)
 
         logger.info("Training and evaluating classifiers...")
-        results = train_and_evaluate(X_train, X_test, y_train, y_test, config)
+        results = train_and_evaluate(X_train, X_test, y_train, y_test, best_estimators, config)
         for name, metrics in results.items():
             logger.info(f"Results for {name}:")
             logger.info(f"Classification Report:\n{metrics['classification_report']}")
@@ -50,7 +52,7 @@ if __name__ == "__main__":
 
         if config.get('ensemble'):
             logger.info("Training and evaluating ensemble voting classifier...")
-            voting_results = train_and_evaluate_voting_classifier(X_train, X_test, y_train, y_test, config)
+            voting_results = train_and_evaluate_voting_classifier(X_train, X_test, y_train, y_test, best_estimators, config)
             logger.info("Ensemble Voting Classifier results:")
             logger.info(voting_results['classification_report'])
             logger.info(f"Confusion Matrix:\n{voting_results['confusion_matrix']}")

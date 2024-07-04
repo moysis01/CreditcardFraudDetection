@@ -9,14 +9,17 @@ from sklearn.neural_network import MLPClassifier
 from xgboost import XGBClassifier
 from lightgbm import LGBMClassifier
 from catboost import CatBoostClassifier
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_auc_score, roc_curve, precision_recall_curve
+from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve, precision_recall_curve
 from sklearn.pipeline import Pipeline
 from utils.logger import log_memory_usage, setup_logger
 import matplotlib.pyplot as plt
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
 from sklearn.model_selection import cross_val_score
 import seaborn as sns
+import os
 
+save_path = 'plots'
+os.makedirs(save_path, exist_ok=True)  # Create the directory if it doesn't exist
 
 logger = setup_logger(__name__)
 
@@ -91,14 +94,17 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, config):
                     'roc_auc': roc_auc_score(y_test, y_proba),
                     'y_proba': y_proba
                 }
-
+                filename = os.path.join(save_path, f"confusion_matrix_{name}.png")
                 # Plot confusion matrix
                 plt.figure(figsize=(6, 4.75))
                 sns.heatmap(pd.DataFrame(cm, index=['Legit', 'Fraud'], columns=['Legit', 'Fraud']), annot=True, fmt='d', cmap='Blues')
                 plt.title(f"Confusion Matrix - {name}")
                 plt.ylabel('True')
                 plt.xlabel('Predicted')
+                plt.savefig(filename)  # Save the plot
                 plt.show()
+                
+
 
                 # Plot ROC and precision-recall curves
                 plot_roc_pr_curves(y_test, y_proba, name)
