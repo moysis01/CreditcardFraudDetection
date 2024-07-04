@@ -5,7 +5,7 @@ from preprocessing import load_data, preprocess_data
 from models.classifiers import train_and_evaluate, plot_roc_pr_curves, hyperparameter_tuning, cross_validate_models
 from models.ensemble import train_and_evaluate_voting_classifier
 
-logger = setup_logger(__name__)
+logger = setup_logger(__name__, log_file='results.log', console_level=logging.INFO, file_level=logging.INFO)
 
 def load_config(config_path):
     """Load configuration file from specified path."""

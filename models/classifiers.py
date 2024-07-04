@@ -202,14 +202,17 @@ def hyperparameter_tuning(X_train, y_train, config):
         if name in tuned_parameters:
             logger.info(f"Hyperparameter tuning for {name}...")
             pipeline = Pipeline(steps=[('classifier', all_classifiers[name])])
+            param_grid = {f'classifier__{key}': value for key, value in tuned_parameters[name].items()}
             grid_search = GridSearchCV(
                 estimator=pipeline,
-                param_grid=tuned_parameters[name],
+                param_grid=param_grid,
                 scoring='accuracy',
                 cv=5,
                 n_jobs=-1
             )
+            log_memory_usage(logger)  # Log memory usage before grid search
             grid_search.fit(X_train, y_train)
+            log_memory_usage(logger)  # Log memory usage after grid search
             best_estimators[name] = grid_search.best_estimator_
             logger.info(f"Best parameters for {name}: {grid_search.best_params_}")
         else:
@@ -217,14 +220,12 @@ def hyperparameter_tuning(X_train, y_train, config):
 
     return best_estimators
 
-
-
-def cross_validate_models(X, y, config, logger):
+def cross_validate_models(X, y, config, logger, best_estimators):
     selected_classifiers = config['classifiers']
     for name in selected_classifiers:
         logger.info(f"Cross-validating {name}...")
         log_memory_usage(logger)  # Log memory usage before cross-validation
-        clf = all_classifiers[name]
+        clf = best_estimators.get(name, all_classifiers[name])
         try:
             scores = cross_val_score(clf, X, y, cv=5, scoring='accuracy', n_jobs=-1)
             logger.info(f"Cross-validation scores for {name}: {scores}")
@@ -232,5 +233,4 @@ def cross_validate_models(X, y, config, logger):
         except Exception as e:
             logger.error(f"Error during cross-validation for {name}: {str(e)}")
         log_memory_usage(logger)  # Log memory usage after cross-validation
-
 
