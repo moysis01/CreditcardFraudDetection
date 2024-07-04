@@ -1,4 +1,7 @@
+import os
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
@@ -12,12 +15,9 @@ from catboost import CatBoostClassifier
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve, precision_recall_curve
 from sklearn.pipeline import Pipeline
 from utils.logger import log_memory_usage, setup_logger
-import matplotlib.pyplot as plt
-from sklearn.model_selection import GridSearchCV, StratifiedKFold
-from sklearn.model_selection import cross_val_score
-import seaborn as sns
-import os
+from sklearn.model_selection import GridSearchCV, cross_val_score
 
+# Set up save path for plots
 save_path = 'plots'
 os.makedirs(save_path, exist_ok=True)  # Create the directory if it doesn't exist
 
@@ -64,55 +64,55 @@ def plot_precision_recall_curve(y_test, y_proba, classifier_name):
     plt.title(f'Precision-Recall Curve - {classifier_name}')
     plt.legend(loc='lower left')
 
-
-def train_and_evaluate(X_train, X_test, y_train, y_test, config):
+def train_and_evaluate(X_train, X_test, y_train, y_test, best_estimators, config):
     results = {}
-    for name, clf in all_classifiers.items():
-        if name in config['classifiers']:  # Check if the classifier is listed in the config
-            try:
-                logger.info(f"Training {name}...")
-                clf.fit(X_train, y_train)
-                y_pred = clf.predict(X_test)
-                y_proba = clf.predict_proba(X_test)[:, 1] if hasattr(clf, "predict_proba") else clf.decision_function(X_test)
-                
-                # Compute confusion matrix and extract evaluation metrics
-                cm = confusion_matrix(y_test, y_pred)
-                TN, FP, FN, TP = cm.ravel()
-                accuracy = (TP + TN) / (TP + TN + FP + FN)
-                precision = TP / (TP + FP) if TP + FP != 0 else float('NaN')
-                recall = TP / (FN + TP) if FN + TP != 0 else float('NaN')
-                f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) != 0 else float('NaN')
+    for name in config['classifiers']:
+        try:
+            logger.info(f"Training {name}...")
 
-                # Store results
-                results[name] = {
-                    'classification_report': classification_report(y_test, y_pred),
-                    'confusion_matrix': cm,
-                    'accuracy': accuracy,
-                    'precision': precision,
-                    'recall': recall,
-                    'f1_score': f1_score,
-                    'roc_auc': roc_auc_score(y_test, y_proba),
-                    'y_proba': y_proba
-                }
-                filename = os.path.join(save_path, f"confusion_matrix_{name}.png")
-                # Plot confusion matrix
-                plt.figure(figsize=(6, 4.75))
-                sns.heatmap(pd.DataFrame(cm, index=['Legit', 'Fraud'], columns=['Legit', 'Fraud']), annot=True, fmt='d', cmap='Blues')
-                plt.title(f"Confusion Matrix - {name}")
-                plt.ylabel('True')
-                plt.xlabel('Predicted')
-                plt.savefig(filename)  # Save the plot
-                plt.show()
-                
+            # Use best estimators if available, otherwise use the default classifier
+            clf = best_estimators.get(name, all_classifiers[name])
 
+            clf.fit(X_train, y_train)
+            y_pred = clf.predict(X_test)
+            y_proba = clf.predict_proba(X_test)[:, 1] if hasattr(clf, "predict_proba") else clf.decision_function(X_test)
+            
+            # Compute confusion matrix and extract evaluation metrics
+            cm = confusion_matrix(y_test, y_pred)
+            TN, FP, FN, TP = cm.ravel()
+            accuracy = (TP + TN) / (TP + TN + FP + FN)
+            precision = TP / (TP + FP) if TP + FP != 0 else float('NaN')
+            recall = TP / (FN + TP) if FN + TP != 0 else float('NaN')
+            f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) != 0 else float('NaN')
 
-                # Plot ROC and precision-recall curves
-                plot_roc_pr_curves(y_test, y_proba, name)
+            # Store results
+            results[name] = {
+                'classification_report': classification_report(y_test, y_pred),
+                'confusion_matrix': cm,
+                'accuracy': accuracy,
+                'precision': precision,
+                'recall': recall,
+                'f1_score': f1_score,
+                'roc_auc': roc_auc_score(y_test, y_proba),
+                'y_proba': y_proba
+            }
+            filename = os.path.join(save_path, f"confusion_matrix_{name}.png")
+            # Plot confusion matrix
+            plt.figure(figsize=(6, 4.75))
+            sns.heatmap(pd.DataFrame(cm, index=['Legit', 'Fraud'], columns=['Legit', 'Fraud']), annot=True, fmt='d', cmap='Blues')
+            plt.title(f"Confusion Matrix - {name}")
+            plt.ylabel('True')
+            plt.xlabel('Predicted')
+            plt.savefig(filename)  # Save the plot
+            plt.show()
 
-                logger.info(f"Evaluating {name}...")
-            except Exception as e:
-                logger.error(f"An error occurred while training {name}: {e}")
-                continue
+            # Plot ROC and precision-recall curves
+            plot_roc_pr_curves(y_test, y_proba, name)
+
+            logger.info(f"Evaluating {name}...")
+        except Exception as e:
+            logger.error(f"An error occurred while training {name}: {e}")
+            continue
     return results
 
 

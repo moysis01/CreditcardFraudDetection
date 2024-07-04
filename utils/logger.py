@@ -2,6 +2,14 @@ import logging
 import os
 import psutil
 
+class ProgressFilter(logging.Filter):
+    def filter(self, record):
+        return 'Results' not in record.getMessage()
+
+class ResultsFilter(logging.Filter):
+    def filter(self, record):
+        return 'Results' in record.getMessage()
+
 def setup_logger(name, log_file='results.log', console_level=logging.INFO, file_level=logging.INFO):
     """
     Sets up a logger with the specified name.
@@ -22,7 +30,8 @@ def setup_logger(name, log_file='results.log', console_level=logging.INFO, file_
         # Console handler
         ch = logging.StreamHandler()
         ch.setLevel(console_level)
-        ch_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        ch.addFilter(ProgressFilter())
+        ch_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         ch.setFormatter(ch_formatter)
         logger.addHandler(ch)
 
@@ -30,7 +39,8 @@ def setup_logger(name, log_file='results.log', console_level=logging.INFO, file_
             # File handler
             fh = logging.FileHandler(log_file)
             fh.setLevel(file_level)
-            fh_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+            fh.addFilter(ResultsFilter())
+            fh_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
             fh.setFormatter(fh_formatter)
             logger.addHandler(fh)
 
@@ -46,4 +56,4 @@ def log_memory_usage(logger):
     """
     process = psutil.Process(os.getpid())
     memory_usage = process.memory_info().rss / (1024 ** 2)  # Convert bytes to MB
-    logger.info(f"Current memory usage: {memory_usage:.2f} MB")
+    logger.debug(f"Current memory usage: {memory_usage:.2f} MB")

@@ -1,0 +1,12 @@
+
+2024-07-04 06:45:50,784 - INFO - Results for Logistic Regression:
+2024-07-04 06:45:52,114 - INFO - Results for Decision Tree:
+2024-07-04 06:45:54,025 - INFO - Results for Random Forest:
+2024-07-04 06:45:55,183 - INFO - Results for KNN:
+2024-07-04 06:45:56,189 - INFO - Results for Gradient Boosting:
+2024-07-04 06:45:57,177 - INFO - Results for XGBoost:
+2024-07-04 06:45:58,070 - INFO - Results for LightGBM:
+2024-07-04 06:45:58,845 - INFO - Results for AdaBoost:
+2024-07-04 06:46:00,327 - INFO - Results for Naive Bayes:
+2024-07-04 06:46:01,453 - INFO - Results for MLP:
+2024-07-04 06:46:02,609 - INFO - Results for CatBoost:
