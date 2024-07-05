@@ -25,7 +25,7 @@ logger = setup_logger(__name__)
 all_classifiers = {
     'Logistic Regression': LogisticRegression(),
     'Decision Tree': DecisionTreeClassifier(),
-    'Random Forest': RandomForestClassifier(n_estimators=50,max_dept= 10,min_samples_split=2),
+    'Random Forest': RandomForestClassifier(n_estimators=50,max_depth= 10,min_samples_split=2),
     'SVM': SVC(probability=True),
     'KNN': KNeighborsClassifier(),
     'Gradient Boosting': GradientBoostingClassifier(),
