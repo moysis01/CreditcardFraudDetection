@@ -1,16 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
-from sklearn.svm import SVC
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.neural_network import MLPClassifier
-from xgboost import XGBClassifier
-from lightgbm import LGBMClassifier
-from catboost import CatBoostClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, precision_recall_curve
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
@@ -23,18 +14,7 @@ logger = setup_logger(__name__)
 
 # Define all classifiers
 all_classifiers = {
-    'Logistic Regression': LogisticRegression(),
-    'Decision Tree': DecisionTreeClassifier(),
-    'Random Forest': RandomForestClassifier(n_estimators=50,max_depth= 10,min_samples_split=2),
-    'SVM': SVC(probability=True),
-    'KNN': KNeighborsClassifier(),
-    'Gradient Boosting': GradientBoostingClassifier(),
-    'XGBoost': XGBClassifier(),
-    'LightGBM': LGBMClassifier(),
-    'AdaBoost': AdaBoostClassifier(),
-    'Naive Bayes': GaussianNB(),
-    'MLP': MLPClassifier(),
-    'CatBoost': CatBoostClassifier()
+    'Random Forest': RandomForestClassifier(n_estimators=50, max_depth=10),
 }
 
 def analyze_first_fold(X, y):
@@ -97,6 +77,7 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, best_estimators, config
             }
 
             plot_confusion_matrix(cm, name)
+            plot_roc_pr_curves(y_test, results[name]['y_proba'], name) 
 
             # Plot feature importance
             if hasattr(clf, 'named_steps') and 'classifier' in clf.named_steps:
@@ -116,7 +97,11 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, best_estimators, config
 
 def hyperparameter_tuning(X_train, y_train, config, logger):
     tuned_parameters = {
-        
+        'Random Forest': {
+            'classifier__max_depth': [10, 20, None],
+            'classifier__min_samples_split': [2, 5, 10]
+        }
+        # Add other classifiers and their parameters here
     }
 
     selected_classifiers = config['classifiers']
@@ -178,15 +163,13 @@ def cross_validate_models(X, y, config, logger, best_estimators):
             logger.info("Cross-validation accuracies for %s: %s", name, accuracies)
             logger.info("Mean accuracy for %s: %f", name, np.mean(accuracies))
             logger.info("Cross-validation precisions for %s: %s", name, precisions)
-            logger.info(f"Mean precision for {name}: {np.mean(precisions)}")
-            logger.info(f"Cross-validation recalls for {name}: {recalls}")
-            logger.info(f"Mean recall for {name}: {np.mean(recalls)}")
-            logger.info(f"Cross-validation F1 scores for {name}: {f1_scores}")
-            logger.info(f"Mean F1 score for {name}: {np.mean(f1_scores)}")
+            logger.info("Mean precision for %s: %f", name, np.mean(precisions))
+            logger.info("Cross-validation recalls for %s: %s", name, recalls)
+            logger.info("Mean recall for %s: %f", name, np.mean(recalls))
+            logger.info("Cross-validation F1 scores for %s: %s", name, f1_scores)
+            logger.info("Mean F1 score for %s: %f", name, np.mean(f1_scores))
             
         except Exception as e:
-            logger.error(f"Error during cross-validation for {name}: {str(e)}")
+            logger.error("Error during cross-validation for %s: %s", name, e)
         
-        log_memory_usage(logger)  
-
-
+        log_memory_usage(logger)  # Log memory usage after cross-validation

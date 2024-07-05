@@ -8,59 +8,30 @@ from sklearn.metrics import roc_curve, roc_auc_score, precision_recall_curve
 save_path = 'plots'
 os.makedirs(save_path, exist_ok=True)  # Create the directory if it doesn't exist
 
-def plot_confusion_matrix(cm, classifier_name):
-    plt.figure(figsize=(6, 4.75))
-    sns.heatmap(pd.DataFrame(cm, index=['Legit', 'Fraud'], columns=['Legit', 'Fraud']), annot=True, fmt='d', cmap='Blues')
-    plt.title(f"Confusion Matrix - {classifier_name}")
-    plt.ylabel('True')
-    plt.xlabel('Predicted')
-    filename = os.path.join(save_path, f"confusion_matrix_{classifier_name}.png")
-    plt.savefig(filename)  # Save the plot
-    plt.close()
-
-def plot_feature_importance(importances, feature_names, classifier_name):
-    # Create a DataFrame for plotting
-    feature_importance_df = pd.DataFrame({
-        'Feature': feature_names,
-        'Importance': importances
-    }).sort_values(by='Importance', ascending=False)
-
-    # Plot the feature importances
-    plt.figure(figsize=(10, 6))
-    sns.barplot(x='Importance', y='Feature', data=feature_importance_df)
-    plt.title(f'Feature Importance - {classifier_name}')
-    plt.tight_layout()
-
-    # Save the plot
-    filename = os.path.join(save_path, f"feature_importance_{classifier_name}.png")
-    plt.savefig(filename)
-    plt.close()
-
-def plot_roc_pr_curves(y_test, y_proba, classifier_name):
-    plt.figure(figsize=(12, 5))
-    plot_roc_curve(y_test, y_proba, classifier_name)
-    plot_precision_recall_curve(y_test, y_proba, classifier_name)
-    plt.tight_layout()
-    plt.show()
-
 def plot_roc_curve(y_test, y_proba, classifier_name):
     fpr, tpr, _ = roc_curve(y_test, y_proba)
-    plt.subplot(1, 2, 1)
+    plt.figure(figsize=(10, 6))
     plt.plot(fpr, tpr, label=f'AUC = {roc_auc_score(y_test, y_proba):.2f}')
     plt.plot([0, 1], [0, 1], 'k--')
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
     plt.title(f'ROC Curve - {classifier_name}')
     plt.legend(loc='lower right')
+    filename = os.path.join(save_path, f"roc_curve_{classifier_name}.png")
+    plt.savefig(filename)  # Save the plot
+    plt.close()
 
 def plot_precision_recall_curve(y_test, y_proba, classifier_name):
     precision, recall, _ = precision_recall_curve(y_test, y_proba)
-    plt.subplot(1, 2, 2)
+    plt.figure(figsize=(10, 6))
     plt.plot(recall, precision, label=f'AP = {precision.mean():.2f}')
     plt.xlabel('Recall')
     plt.ylabel('Precision')
     plt.title(f'Precision-Recall Curve - {classifier_name}')
     plt.legend(loc='lower left')
+    filename = os.path.join(save_path, f"precision_recall_curve_{classifier_name}.png")
+    plt.savefig(filename)  # Save the plot
+    plt.close()
 
 def save_distribution_plots(X_train, X_test, feature_names):
     for column in feature_names:
@@ -81,3 +52,40 @@ def save_boxplots(X_train, feature_names):
         filename = os.path.join(save_path, f'{column}_boxplot.png')
         plt.savefig(filename)
         plt.close()
+
+def plot_feature_importance(importances, feature_names, classifier_name):
+    # Create a DataFrame for plotting
+    feature_importance_df = pd.DataFrame({
+        'Feature': feature_names,
+        'Importance': importances
+    }).sort_values(by='Importance', ascending=False)
+
+    # Plot the feature importances
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x='Importance', y='Feature', data=feature_importance_df)
+    plt.title(f'Feature Importance - {classifier_name}')
+    plt.tight_layout()
+
+    # Save the plot
+    filename = os.path.join(save_path, f"feature_importance_{classifier_name}.png")
+    plt.savefig(filename)
+    plt.close()
+
+def plot_confusion_matrix(cm, classifier_name):
+    plt.figure(figsize=(6, 4.75))
+    sns.heatmap(pd.DataFrame(cm, index=['Legit', 'Fraud'], columns=['Legit', 'Fraud']), annot=True, fmt='d', cmap='Blues')
+    plt.title(f"Confusion Matrix - {classifier_name}")
+    plt.ylabel('True')
+    plt.xlabel('Predicted')
+    filename = os.path.join(save_path, f"confusion_matrix_{classifier_name}.png")
+    plt.savefig(filename)  # Save the plot
+    plt.close()
+
+def plot_roc_pr_curves(y_test, y_proba, classifier_name):
+    plt.figure(figsize=(12, 5))
+    plot_roc_curve(y_test, y_proba, classifier_name)
+    plot_precision_recall_curve(y_test, y_proba, classifier_name)
+    plt.tight_layout()
+    filename = os.path.join(save_path, f"roc_pr_curves_{classifier_name}.png")
+    plt.savefig(filename)  # Save the combined plot
+    plt.close()

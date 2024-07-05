@@ -2,7 +2,7 @@ import json
 import logging
 from utils import setup_logger, log_memory_usage
 from preprocessing import load_data, preprocess_data
-from models.classifiers import train_and_evaluate, plot_roc_pr_curves, hyperparameter_tuning, cross_validate_models, all_classifiers, analyze_first_fold
+from models.classifiers import train_and_evaluate, hyperparameter_tuning, cross_validate_models, all_classifiers, analyze_first_fold
 from models.ensemble import train_and_evaluate_voting_classifier
 
 logger = setup_logger(__name__, log_file='results.log', console_level=logging.INFO, file_level=logging.INFO)
@@ -35,8 +35,8 @@ if __name__ == "__main__":
         X_train, X_test, y_train, y_test, X, y = preprocess_data(df)
         log_memory_usage(logger)
 
-        # Analyze the first fold
-        analyze_first_fold(X, y)
+        #logger.info("Analyzing the first fold...")
+        #analyze_first_fold(X, y)
         log_memory_usage(logger)
 
         best_estimators = {}
@@ -45,7 +45,6 @@ if __name__ == "__main__":
             best_estimators = hyperparameter_tuning(X_train, y_train, config, logger)
             log_memory_usage(logger)
         else:
-            # Populate best_estimators with default classifiers if tuning is skipped
             best_estimators = {name: all_classifiers[name] for name in config['classifiers']}
 
         if config.get('cross_validation'):

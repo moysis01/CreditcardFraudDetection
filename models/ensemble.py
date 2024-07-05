@@ -1,6 +1,7 @@
 from sklearn.ensemble import VotingClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_auc_score
 from utils.logger import setup_logger
+from tqdm import tqdm
 
 # Setup logger
 logger = setup_logger(__name__)
@@ -11,7 +12,7 @@ def get_voting_classifier(config, best_estimators):
     """
     # Ensure all specified classifiers are available in the best_estimators dictionary
     estimators = []
-    for name in config['classifiers']:
+    for name in tqdm(config['classifiers'], desc="Setting up Voting Classifier"):
         if name in best_estimators:
             estimators.append((name, best_estimators[name]))
         else:
@@ -60,5 +61,4 @@ def train_and_evaluate_voting_classifier(X_train, X_test, y_train, y_test, best_
     except Exception as e:
         logger.error(f"An error occurred while training and evaluating the voting classifier: {str(e)}")
         return {}
-
 
