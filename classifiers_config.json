@@ -1,15 +1,10 @@
 {
     "classifiers": [
-      "Logistic Regression",
-      "Decision Tree",
-      "Random Forest",
-      "KNN",
-      "Gradient Boosting",
-      "XGBoost",
-      "LightGBM",
-      "AdaBoost",
-      "Naive Bayes",
-      "MLP",
-      "CatBoost"
-    ]
+      "Random Forest"
+    ],
+    "hyperparameter_tuning": true,
+    "cross_validation": true,
+    "ensemble": false,
+    "voting": "soft"
 }
+

@@ -16,10 +16,31 @@ from sklearn.metrics import classification_report, confusion_matrix, roc_auc_sco
 from sklearn.pipeline import Pipeline
 from utils.logger import log_memory_usage, setup_logger
 from sklearn.model_selection import GridSearchCV, cross_val_score
+from sklearn.metrics import make_scorer, precision_score
 
 # Set up save path for plots
 save_path = 'plots'
 os.makedirs(save_path, exist_ok=True)  # Create the directory if it doesn't exist
+
+
+"""
+{
+    "classifiers": [
+      "Logistic Regression",
+      "Decision Tree",
+      "Random Forest",
+      "KNN",
+      "Gradient Boosting",
+      "XGBoost",
+      "LightGBM",
+      "AdaBoost",
+      "Naive Bayes",
+      "MLP",
+      "CatBoost"
+    ]
+}
+
+"""
 
 logger = setup_logger(__name__)
 
@@ -45,6 +66,7 @@ def plot_roc_pr_curves(y_test, y_proba, classifier_name):
     plt.tight_layout()
     plt.show()
 
+
 def plot_roc_curve(y_test, y_proba, classifier_name):
     fpr, tpr, _ = roc_curve(y_test, y_proba)
     plt.subplot(1, 2, 1)
@@ -64,6 +86,15 @@ def plot_precision_recall_curve(y_test, y_proba, classifier_name):
     plt.title(f'Precision-Recall Curve - {classifier_name}')
     plt.legend(loc='lower left')
 
+def adjusted_prediction(model, X, threshold=0.5):
+    """
+    Adjust prediction based on a specified threshold.
+    """
+    y_pred_prob = model.predict_proba(X)[:, 1]  # Get the probability of the positive class
+    y_pred_adj = (y_pred_prob > threshold).astype(int)
+    return y_pred_adj
+
+
 def train_and_evaluate(X_train, X_test, y_train, y_test, best_estimators, config):
     results = {}
     for name in config['classifiers']:
@@ -76,9 +107,13 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, best_estimators, config
             clf.fit(X_train, y_train)
             y_pred = clf.predict(X_test)
             y_proba = clf.predict_proba(X_test)[:, 1] if hasattr(clf, "predict_proba") else clf.decision_function(X_test)
+
+            # Adjust predictions with a custom threshold
+            threshold = 0.7  # Example threshold
+            y_pred_adj = adjusted_prediction(clf, X_test, threshold)
             
             # Compute confusion matrix and extract evaluation metrics
-            cm = confusion_matrix(y_test, y_pred)
+            cm = confusion_matrix(y_test, y_pred_adj)
             TN, FP, FN, TP = cm.ravel()
             accuracy = (TP + TN) / (TP + TN + FP + FN)
             precision = TP / (TP + FP) if TP + FP != 0 else float('NaN')
@@ -87,7 +122,7 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, best_estimators, config
 
             # Store results
             results[name] = {
-                'classification_report': classification_report(y_test, y_pred),
+                'classification_report': classification_report(y_test, y_pred_adj),
                 'confusion_matrix': cm,
                 'accuracy': accuracy,
                 'precision': precision,
@@ -104,10 +139,6 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, best_estimators, config
             plt.ylabel('True')
             plt.xlabel('Predicted')
             plt.savefig(filename)  # Save the plot
-            plt.show()
-
-            # Plot ROC and precision-recall curves
-            plot_roc_pr_curves(y_test, y_proba, name)
 
             logger.info(f"Evaluating {name}...")
         except Exception as e:
@@ -121,7 +152,8 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, best_estimators, config
 
 
 
-def hyperparameter_tuning(X_train, y_train, config):
+
+def hyperparameter_tuning(X_train, y_train, config,logger):
     tuned_parameters = {
         'Logistic Regression': {
         'C': [0.001, 0.01, 0.1, 1, 10, 100],
@@ -134,11 +166,8 @@ def hyperparameter_tuning(X_train, y_train, config):
             'min_samples_leaf': [1, 2, 5, 10]
         },
         'Random Forest': {
-            'n_estimators': [100, 200, 300, 500],
-            'max_features': ['auto', 'sqrt', 'log2'],
-            'max_depth': [None, 10, 20, 30],
-            'min_samples_split': [2, 5, 10],
-            'min_samples_leaf': [1, 2, 4]
+            'n_estimators': [50 ,100, 200]
+
         },
         'SVM': {
             'C': [0.1, 1, 10, 100, 1000],
@@ -206,8 +235,8 @@ def hyperparameter_tuning(X_train, y_train, config):
             grid_search = GridSearchCV(
                 estimator=pipeline,
                 param_grid=param_grid,
-                scoring='accuracy',
-                cv=5,
+                scoring='precision',
+                cv=3,
                 n_jobs=-1
             )
             log_memory_usage(logger)  # Log memory usage before grid search
