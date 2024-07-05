@@ -9,7 +9,7 @@ logger = setup_logger(__name__)
 def load_data(file_path):
     logger.info("Loading data from file: %s", file_path)
     df = pd.read_csv(file_path)  
-    df = df.sample(frac=0.10, random_state=1)
+    df = df.sample(frac=0.10, random_state=25)
     logger.info("Data loaded. Shape: %s", df.shape)
     return df
 
@@ -18,18 +18,18 @@ def preprocess_data(df):
         logger.info("Starting data preprocessing...")
         
         original_shape = df.shape
-        df = df.drop_duplicates()
-        logger.info("Dropped duplicates. Original shape: %s, New shape: %s", original_shape, df.shape)
+        df.drop_duplicates(inplace=True)
+        logger.info("Dropped duplicates. Original shape: %s, New shape: %s", original_shape,df.shape)
 
         X = df.drop('Class', axis=1)
         y = df['Class']
         logger.info("Separated features and target. X shape: %s, y shape: %s", X.shape, y.shape)
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=25)
         logger.info("Data split into train and test sets. X_train shape: %s, X_test shape: %s, y_train shape: %s, y_test shape: %s", X_train.shape, X_test.shape, y_train.shape, y_test.shape)
 
         logger.info("Applying SMOTETomek...")
-        preprocessor = SMOTETomek(random_state=1)
+        preprocessor = SMOTETomek(random_state=25)
         X_train_res, y_train_res = preprocessor.fit_resample(X_train, y_train)
         logger.info("Applied SMOTETomek. Resampled X_train shape: %s, y_train shape: %s", X_train_res.shape, y_train_res.shape)
 

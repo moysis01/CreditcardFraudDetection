@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 import seaborn as sns
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
@@ -15,7 +16,7 @@ from catboost import CatBoostClassifier
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve, precision_recall_curve
 from sklearn.pipeline import Pipeline
 from utils.logger import log_memory_usage, setup_logger
-from sklearn.model_selection import GridSearchCV, cross_val_score
+from sklearn.model_selection import GridSearchCV, StratifiedKFold, cross_val_score
 from sklearn.metrics import make_scorer, precision_score
 
 # Set up save path for plots
@@ -47,7 +48,7 @@ logger = setup_logger(__name__)
 all_classifiers = {
     'Logistic Regression': LogisticRegression(),
     'Decision Tree': DecisionTreeClassifier(),
-    'Random Forest': RandomForestClassifier(),
+    'Random Forest': RandomForestClassifier(n_estimators=50),
     'SVM': SVC(probability=True),
     'KNN': KNeighborsClassifier(),
     'Gradient Boosting': GradientBoostingClassifier(),
@@ -58,6 +59,17 @@ all_classifiers = {
     'MLP': MLPClassifier(),
     'CatBoost': CatBoostClassifier()
 }
+
+def plot_feature_importance(importance, features, model_name):
+    # Create a dataframe for better plotting
+    feature_importance_df = pd.DataFrame({'Feature': features, 'Importance': importance})
+    feature_importance_df = feature_importance_df.sort_values(by='Importance', ascending=False)
+
+    plt.figure(figsize=(10, 8))
+    sns.barplot(x='Importance', y='Feature', data=feature_importance_df)
+    plt.title(f'Feature Importance for {model_name}')
+    plt.tight_layout()
+    plt.show()
 
 def plot_roc_pr_curves(y_test, y_proba, classifier_name):
     plt.figure(figsize=(12, 5))
@@ -86,14 +98,20 @@ def plot_precision_recall_curve(y_test, y_proba, classifier_name):
     plt.title(f'Precision-Recall Curve - {classifier_name}')
     plt.legend(loc='lower left')
 
-def adjusted_prediction(model, X, threshold=0.5):
+def find_best_threshold(y_test, y_proba):
+    precision, recall, thresholds = precision_recall_curve(y_test, y_proba)
+    f1_scores = 2 * precision * recall / (precision + recall)
+    best_index = f1_scores.argmax()
+    best_threshold = thresholds[best_index]
+    return best_threshold
+
+def adjusted_prediction(clf, X, threshold=0.5):
     """
     Adjust prediction based on a specified threshold.
     """
-    y_pred_prob = model.predict_proba(X)[:, 1]  # Get the probability of the positive class
-    y_pred_adj = (y_pred_prob > threshold).astype(int)
+    y_pred_prob = clf.predict_proba(X)[:, 1] if hasattr(clf, "predict_proba") else clf.decision_function(X)
+    y_pred_adj = (y_pred_prob >= threshold).astype(int)
     return y_pred_adj
-
 
 def train_and_evaluate(X_train, X_test, y_train, y_test, best_estimators, config):
     results = {}
@@ -105,13 +123,12 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, best_estimators, config
             clf = best_estimators.get(name, all_classifiers[name])
 
             clf.fit(X_train, y_train)
-            y_pred = clf.predict(X_test)
             y_proba = clf.predict_proba(X_test)[:, 1] if hasattr(clf, "predict_proba") else clf.decision_function(X_test)
-
-            # Adjust predictions with a custom threshold
-            threshold = 0.7  # Example threshold
-            y_pred_adj = adjusted_prediction(clf, X_test, threshold)
             
+            # Find the best threshold
+            best_threshold = find_best_threshold(y_test, y_proba)
+            y_pred_adj = adjusted_prediction(clf, X_test, best_threshold)
+
             # Compute confusion matrix and extract evaluation metrics
             cm = confusion_matrix(y_test, y_pred_adj)
             TN, FP, FN, TP = cm.ravel()
@@ -140,11 +157,20 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, best_estimators, config
             plt.xlabel('Predicted')
             plt.savefig(filename)  # Save the plot
 
+            # Plot feature importance
+            if hasattr(clf, 'feature_importances_'):
+                importances = clf.feature_importances_
+                plot_feature_importance(importances, X_train.columns, name)
+            elif hasattr(clf, 'coef_'):
+                importances = np.abs(clf.coef_[0])  # For linear models like Logistic Regression
+                plot_feature_importance(importances, X_train.columns, name)
+
             logger.info(f"Evaluating {name}...")
         except Exception as e:
             logger.error(f"An error occurred while training {name}: {e}")
             continue
     return results
+
 
 
 
@@ -166,8 +192,7 @@ def hyperparameter_tuning(X_train, y_train, config,logger):
             'min_samples_leaf': [1, 2, 5, 10]
         },
         'Random Forest': {
-            'n_estimators': [50 ,100, 200]
-
+        
         },
         'SVM': {
             'C': [0.1, 1, 10, 100, 1000],
@@ -236,7 +261,7 @@ def hyperparameter_tuning(X_train, y_train, config,logger):
                 estimator=pipeline,
                 param_grid=param_grid,
                 scoring='precision',
-                cv=3,
+                cv=StratifiedKFold(n_splits=5, shuffle=True, random_state=25),
                 n_jobs=-1
             )
             log_memory_usage(logger)  # Log memory usage before grid search
