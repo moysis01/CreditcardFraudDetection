@@ -2,7 +2,7 @@ import json
 import logging
 from utils import setup_logger, log_memory_usage
 from preprocessing import load_data, preprocess_data
-from models.classifiers import train_and_evaluate, plot_roc_pr_curves, hyperparameter_tuning, cross_validate_models, all_classifiers  
+from models.classifiers import train_and_evaluate, plot_roc_pr_curves, hyperparameter_tuning, cross_validate_models, all_classifiers, analyze_first_fold
 from models.ensemble import train_and_evaluate_voting_classifier
 
 logger = setup_logger(__name__, log_file='results.log', console_level=logging.INFO, file_level=logging.INFO)
@@ -25,17 +25,25 @@ if __name__ == "__main__":
     try:
         logger.info("Loading configuration...")
         config = load_config('classifiers_config.json')
+        log_memory_usage(logger)
 
         logger.info("Loading dataset...")
         df = load_data('C:\\Users\\ke1no\\OneDrive - Sheffield Hallam University\\Year3\\Disseration\\Dataset-Approved\\creditcard.csv')
+        log_memory_usage(logger)
 
         logger.info("Preprocessing data...")
         X_train, X_test, y_train, y_test, X, y = preprocess_data(df)
+        log_memory_usage(logger)
+
+        # Analyze the first fold
+        analyze_first_fold(X, y)
+        log_memory_usage(logger)
 
         best_estimators = {}
         if config.get('hyperparameter_tuning'):
             logger.info("Hyperparameter tuning...")
             best_estimators = hyperparameter_tuning(X_train, y_train, config, logger)
+            log_memory_usage(logger)
         else:
             # Populate best_estimators with default classifiers if tuning is skipped
             best_estimators = {name: all_classifiers[name] for name in config['classifiers']}
@@ -43,9 +51,11 @@ if __name__ == "__main__":
         if config.get('cross_validation'):
             logger.info("Cross-validating models...")
             cross_validate_models(X, y, config, logger, best_estimators)
+            log_memory_usage(logger)
 
         logger.info("Training and evaluating classifiers...")
         results = train_and_evaluate(X_train, X_test, y_train, y_test, best_estimators, config)
+        log_memory_usage(logger)
         for name, metrics in results.items():
             logger.info(f"Results for {name}:")
             logger.info(f"Results for {name} Classification Report:\n{metrics['classification_report']}")
@@ -56,6 +66,7 @@ if __name__ == "__main__":
         if config.get('ensemble'):
             logger.info("Training and evaluating ensemble voting classifier...")
             voting_results = train_and_evaluate_voting_classifier(X_train, X_test, y_train, y_test, best_estimators, config)
+            log_memory_usage(logger)
             logger.info("Results for Ensemble Voting Classifier:")
             logger.info(f"Results for Ensemble Voting Classifier Classification Report:\n{voting_results['classification_report']}")
             logger.info(f"Results for Ensemble Voting Classifier Confusion Matrix:\n{voting_results['confusion_matrix']}")
@@ -64,3 +75,4 @@ if __name__ == "__main__":
 
     except Exception as e:
         logger.error(f"An error occurred in the main execution: {e}")
+        log_memory_usage(logger)
