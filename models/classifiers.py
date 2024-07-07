@@ -5,7 +5,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, precision_recall_curve
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
-from scipy.stats import zscore
 from utils.logger import log_memory_usage, setup_logger
 from utils.plotter import plot_feature_importance, plot_roc_pr_curves, save_distribution_plots, save_boxplots, plot_confusion_matrix
 
@@ -14,25 +13,8 @@ logger = setup_logger(__name__)
 
 # Define all classifiers
 all_classifiers = {
-    'Random Forest': RandomForestClassifier()#max_depth=100, min_samples_split=5,n_estimators=50)
+    'Random Forest': RandomForestClassifier(max_depth=100, min_samples_split=5, n_estimators=50)
 }
-
-def analyze_first_fold(X, y):
-    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=25)
-    first_fold_train_index, first_fold_test_index = next(iter(skf.split(X, y)))
-    X_train_first_fold, X_test_first_fold = X.iloc[first_fold_train_index], X.iloc[first_fold_test_index]
-    y_train_first_fold, y_test_first_fold = y.iloc[first_fold_train_index], y.iloc[first_fold_test_index]
-
-    logger.info("First Fold Train Class Distribution: %s", np.bincount(y_train_first_fold))
-    logger.info("First Fold Test Class Distribution: %s", np.bincount(y_test_first_fold))
-
-    save_distribution_plots(X_train_first_fold, X_test_first_fold, X.columns)
-
-    z_scores = np.abs(zscore(X_train_first_fold))
-    outliers = (z_scores > 3).sum(axis=1)
-    logger.info("Number of outliers in the first fold train set: %d", sum(outliers > 0))
-
-    save_boxplots(X_train_first_fold, X.columns)
 
 def find_best_threshold(y_test, y_proba):
     precision, recall, thresholds = precision_recall_curve(y_test, y_proba)

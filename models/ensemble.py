@@ -1,13 +1,21 @@
 from sklearn.ensemble import VotingClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_auc_score
+from typing import Dict, Any
 from utils.logger import setup_logger
 
 # Setup logger
 logger = setup_logger(__name__)
 
-def get_voting_classifier(config, best_estimators):
+def get_voting_classifier(config: Dict[str, Any], best_estimators: Dict[str, Any]) -> VotingClassifier:
     """
     Creates a voting classifier based on the specified configuration.
+    
+    Args:
+        config: Configuration dictionary containing classifiers and voting type.
+        best_estimators: Dictionary of the best estimators.
+
+    Returns:
+        A configured VotingClassifier.
     """
     # Ensure all specified classifiers are available in the best_estimators dictionary
     estimators = []
@@ -29,9 +37,23 @@ def get_voting_classifier(config, best_estimators):
     voting_clf = VotingClassifier(estimators=estimators, voting=voting_type)
     return voting_clf
 
-def train_and_evaluate_voting_classifier(X_train, X_test, y_train, y_test, best_estimators, config):
+def train_and_evaluate_voting_classifier(
+    X_train: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.Series, y_test: pd.Series, 
+    best_estimators: Dict[str, Any], config: Dict[str, Any]
+) -> Dict[str, Any]:
     """
     Trains and evaluates the voting classifier.
+    
+    Args:
+        X_train: Training feature set.
+        X_test: Test feature set.
+        y_train: Training labels.
+        y_test: Test labels.
+        best_estimators: Dictionary of the best estimators.
+        config: Configuration dictionary.
+    
+    Returns:
+        A dictionary containing the evaluation results.
     """
     try:
         # Use best estimators if available
@@ -56,7 +78,9 @@ def train_and_evaluate_voting_classifier(X_train, X_test, y_train, y_test, best_
             'roc_auc': roc_auc_score(y_test, y_proba_voting),
             'y_proba': y_proba_voting
         }
+        logger.info("Voting Classifier Evaluation Completed.")
         return results
     except Exception as e:
         logger.error(f"An error occurred while training and evaluating the voting classifier: {str(e)}")
         return {}
+

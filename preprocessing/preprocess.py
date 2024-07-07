@@ -25,13 +25,17 @@ def preprocess_data(df):
         y = df['Class']
         logger.info(f"Separated features and target. X shape: {X.shape}, y shape: {y.shape}")
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=25)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=25, stratify=y)
         logger.info(f"Data split into train and test sets. X_train shape: {X_train.shape}, X_test shape: {X_test.shape}, y_train shape: {y_train.shape}, y_test shape: {y_test.shape}")
+
+        logger.info("Class distribution before SMOTE: %s", y_train.value_counts().to_dict())
 
         logger.info("Applying SMOTE...")
         smote = SMOTE(random_state=25)
         X_train_res, y_train_res = smote.fit_resample(X_train, y_train)
         logger.info(f"Applied SMOTE. Resampled X_train shape: {X_train_res.shape}, y_train shape: {y_train_res.shape}")
+
+        logger.info("Class distribution after SMOTE: %s", y_train_res.value_counts().to_dict())
 
         logger.info("Scaling features...")
         scaler = MinMaxScaler(feature_range=(-1, 1)).fit(X_train_res)
