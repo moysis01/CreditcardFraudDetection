@@ -1,10 +1,16 @@
 {
-    "classifiers": [
+  "classifiers": [
       "Random Forest"
-    ],
-    "hyperparameter_tuning": false,
-    "cross_validation": true,
-    "ensemble": false,
-    "voting": "soft"
-}
+  ],
 
+  "tuned_parameters": {
+      "Random Forest": {
+          "max_features": ["sqrt", "log2"],
+          "bootstrap": [true, false]
+      }
+  },
+  "hyperparameter_tuning": true,
+  "cross_validation": true,
+  "ensemble": false,
+  "voting": "soft"
+}

@@ -86,6 +86,4 @@ def plot_roc_pr_curves(y_test, y_proba, classifier_name):
     plot_roc_curve(y_test, y_proba, classifier_name)
     plot_precision_recall_curve(y_test, y_proba, classifier_name)
     plt.tight_layout()
-    filename = os.path.join(save_path, f"roc_pr_curves_{classifier_name}.png")
-    plt.savefig(filename)  # Save the combined plot
     plt.close()

@@ -14,7 +14,7 @@ logger = setup_logger(__name__)
 
 # Define all classifiers
 all_classifiers = {
-    'Random Forest': RandomForestClassifier(n_estimators=50, max_depth=10),
+    'Random Forest': RandomForestClassifier(max_depth=100, min_samples_split=5,n_estimators=50)
 }
 
 def analyze_first_fold(X, y):
@@ -96,13 +96,7 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, best_estimators, config
     return results
 
 def hyperparameter_tuning(X_train, y_train, config, logger):
-    tuned_parameters = {
-        'Random Forest': {
-            'classifier__max_depth': [10, 20, None],
-            'classifier__min_samples_split': [2, 5, 10]
-        }
-        # Add other classifiers and their parameters here
-    }
+    tuned_parameters = config.get('tuned_parameters', {})
 
     selected_classifiers = config['classifiers']
     best_estimators = {}

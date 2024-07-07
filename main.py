@@ -28,7 +28,9 @@ if __name__ == "__main__":
         log_memory_usage(logger)
 
         logger.info("Loading dataset...")
-        df = load_data('C:\\Users\\ke1no\\OneDrive - Sheffield Hallam University\\Year3\\Disseration\\Dataset-Approved\\creditcard.csv')
+        path_home='C:\\Users\\ke1no\\OneDrive - Sheffield Hallam University\\Year3\\Disseration\\Dataset-Approved\\creditcard.csv'
+        path_library='C:\\Users\\c0003255\\OneDrive - Sheffield Hallam University\\Year3\\Disseration\\Dataset-Approved\\creditcard.csv'
+        df = load_data(path_library)
         log_memory_usage(logger)
 
         logger.info("Preprocessing data...")
