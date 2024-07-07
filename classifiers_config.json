@@ -9,7 +9,7 @@
           "bootstrap": [true, false]
       }
   },
-  "hyperparameter_tuning": true,
+  "hyperparameter_tuning": false,
   "cross_validation": true,
   "ensemble": false,
   "voting": "soft"

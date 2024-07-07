@@ -2,7 +2,7 @@ import json
 import logging
 from utils import setup_logger, log_memory_usage
 from preprocessing import load_data, preprocess_data
-from models.classifiers import train_and_evaluate, hyperparameter_tuning, cross_validate_models, all_classifiers, analyze_first_fold
+from models.classifiers import train_and_evaluate, hyperparameter_tuning, cross_validate_models, all_classifiers
 from models.ensemble import train_and_evaluate_voting_classifier
 
 logger = setup_logger(__name__, log_file='results.log', console_level=logging.INFO, file_level=logging.INFO)
@@ -28,17 +28,13 @@ if __name__ == "__main__":
         log_memory_usage(logger)
 
         logger.info("Loading dataset...")
-        path_home='C:\\Users\\ke1no\\OneDrive - Sheffield Hallam University\\Year3\\Disseration\\Dataset-Approved\\creditcard.csv'
-        path_library='C:\\Users\\c0003255\\OneDrive - Sheffield Hallam University\\Year3\\Disseration\\Dataset-Approved\\creditcard.csv'
-        df = load_data(path_library)
+        path_home = 'C:\\Users\\ke1no\\OneDrive - Sheffield Hallam University\\Year3\\Disseration\\Dataset-Approved\\creditcard.csv'
+        path_library = 'C:\\Users\\c0003255\\OneDrive - Sheffield Hallam University\\Year3\\Disseration\\Dataset-Approved\\creditcard.csv'
+        df = load_data(path_home)  # Change to path_library if running from the library
         log_memory_usage(logger)
 
         logger.info("Preprocessing data...")
         X_train, X_test, y_train, y_test, X, y = preprocess_data(df)
-        log_memory_usage(logger)
-
-        #logger.info("Analyzing the first fold...")
-        #analyze_first_fold(X, y)
         log_memory_usage(logger)
 
         best_estimators = {}

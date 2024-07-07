@@ -1,16 +1,15 @@
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-from imblearn.combine import SMOTETomek
+from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import train_test_split
 from utils.logger import setup_logger
-from tqdm import tqdm
 
 logger = setup_logger(__name__)
 
 def load_data(file_path):
     logger.info("Loading data from file: %s", file_path)
     df = pd.read_csv(file_path)
-    #df = df.sample(frac=0.3, random_state=25)  # Use 30% of the data to avoid SMOTETomek issues
+    # df = df.sample(frac=0.3, random_state=25)  # Use 30% of the data to avoid memory issues
     logger.info("Data loaded. Shape: %s", df.shape)
     return df
 
@@ -29,22 +28,10 @@ def preprocess_data(df):
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=25)
         logger.info(f"Data split into train and test sets. X_train shape: {X_train.shape}, X_test shape: {X_test.shape}, y_train shape: {y_train.shape}, y_test shape: {y_test.shape}")
 
-        logger.info("Applying SMOTETomek...")
-        preprocessor = SMOTETomek(random_state=25)
-        total_chunks = 10
-        chunk_size = len(X_train) // total_chunks
-        X_train_res = pd.DataFrame()
-        y_train_res = pd.Series(dtype='int')
-
-        for i in tqdm(range(total_chunks), desc="Applying SMOTETomek", ncols=100):
-            start_index = i * chunk_size
-            end_index = (i + 1) * chunk_size if i < total_chunks - 1 else len(X_train)
-
-            X_chunk, y_chunk = preprocessor.fit_resample(X_train.iloc[start_index:end_index], y_train.iloc[start_index:end_index])
-            X_train_res = pd.concat([X_train_res, X_chunk])
-            y_train_res = pd.concat([y_train_res, y_chunk])
-
-        logger.info(f"Applied SMOTETomek. Resampled X_train shape: {X_train_res.shape}, y_train shape: {y_train_res.shape}")
+        logger.info("Applying SMOTE...")
+        smote = SMOTE(random_state=25)
+        X_train_res, y_train_res = smote.fit_resample(X_train, y_train)
+        logger.info(f"Applied SMOTE. Resampled X_train shape: {X_train_res.shape}, y_train shape: {y_train_res.shape}")
 
         logger.info("Scaling features...")
         scaler = MinMaxScaler(feature_range=(-1, 1)).fit(X_train_res)

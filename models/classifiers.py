@@ -14,7 +14,7 @@ logger = setup_logger(__name__)
 
 # Define all classifiers
 all_classifiers = {
-    'Random Forest': RandomForestClassifier(max_depth=100, min_samples_split=5,n_estimators=50)
+    'Random Forest': RandomForestClassifier()#max_depth=100, min_samples_split=5,n_estimators=50)
 }
 
 def analyze_first_fold(X, y):
