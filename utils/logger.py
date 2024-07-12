@@ -24,9 +24,9 @@ def setup_logger(name, log_file='results.log', console_level=logging.INFO, file_
     - logger (logging.Logger): Configured logger instance.
     """
     logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)  # Set the overall logger level to the lowest needed
+    logger.setLevel(logging.DEBUG)  # overall logger level to the lowest needed
 
-    if not logger.handlers:  # Check if handlers have already been added
+    if not logger.handlers:  
         # Console handler
         ch = logging.StreamHandler()
         ch.setLevel(console_level)
@@ -44,7 +44,7 @@ def setup_logger(name, log_file='results.log', console_level=logging.INFO, file_
             fh.setFormatter(fh_formatter)
             logger.addHandler(fh)
 
-    logger.propagate = False  # Prevent the logger from propagating messages to ancestor loggers
+    logger.propagate = False  # Preventing the logger from propagating messages to ancestor loggers
     return logger
 
 def log_memory_usage(logger):

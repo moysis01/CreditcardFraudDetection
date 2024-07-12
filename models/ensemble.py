@@ -18,7 +18,7 @@ def get_voting_classifier(config: Dict[str, Any], best_estimators: Dict[str, Any
     Returns:
         A configured VotingClassifier.
     """
-    # Ensure all specified classifiers are available in the best_estimators dictionary
+    # all specified classifiers are available in the best_estimators dictionary
     estimators = []
     for name in config['classifiers']:
         if name in best_estimators:
@@ -29,7 +29,7 @@ def get_voting_classifier(config: Dict[str, Any], best_estimators: Dict[str, Any
     if not estimators:
         raise ValueError("No valid classifiers specified for the voting classifier.")
     
-    # Configure voting type: 'soft' for probabilities, 'hard' for majority voting
+    # voting type: 'soft' for probabilities, 'hard' for majority voting
     voting_type = config.get('voting', 'soft')
     if voting_type not in ['soft', 'hard']:
         logger.error(f"Invalid voting type specified: {voting_type}. Defaulting to 'soft'.")
@@ -57,7 +57,7 @@ def train_and_evaluate_voting_classifier(
         A dictionary containing the evaluation results.
     """
     try:
-        # Use best estimators if available
+        #  best estimators if available
         voting_clf = get_voting_classifier(config, best_estimators)
         logger.info("Training Voting Classifier...")
         voting_clf.fit(X_train, y_train)
