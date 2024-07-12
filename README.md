@@ -1,6 +1,6 @@
 # Fraud Detection in Credit Card Transactions
 
-This project focuses on detecting fraudulent transactions in credit card data using various machine learning techniques. The primary goal is to build models that can accurately identify anomalies and flag potentially fraudulent activities while reducing false positives and improving precision.
+
 
 ## Table of Contents
 
