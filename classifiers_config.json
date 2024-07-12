@@ -1,15 +1,15 @@
 {
   "classifiers": [
-      "Random Forest"
+      "Random Forest",
+      "XGBoost",
+      "MLP"
   ],
 
   "tuned_parameters": {
-      "Random Forest": {
 
-      }
   },
   "hyperparameter_tuning": false,
-  "cross_validation": true,
-  "ensemble": false,
+  "cross_validation": false,
+  "ensemble": true,
   "voting": "soft"
 }

@@ -57,7 +57,7 @@ if __name__ == "__main__":
             logger.info(f"Results for {name}:")
             logger.info(f"Results for {name} Classification Report:\n{metrics['classification_report']}")
             logger.info(f"Results for {name} Confusion Matrix:\n{metrics['confusion_matrix']}")
-            logger.info(f"Results for {name} Accuracy: {metrics['accuracy']}, Precision: {metrics['precision']}, Recall: {metrics['recall']}, F1 Score: {metrics['f1_score']}, ROC AUC: {metrics['roc_auc']}")
+            logger.info(f"Results for {name} Accuracy: {metrics['accuracy']}, Precision: {metrics['precision']}, Recall: {metrics['recall']}, F1 Score: {metrics['f1_score']}, ROC AUC: {metrics['roc_auc']}, MCC: {metrics['mcc']}")
 
         if config.get('ensemble'):
             logger.info("Training and evaluating ensemble voting classifier...")
