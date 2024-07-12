@@ -1,6 +1,7 @@
 from sklearn.ensemble import VotingClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_auc_score
 from typing import Dict, Any
+import pandas as pd
 from utils.logger import setup_logger
 
 # Setup logger

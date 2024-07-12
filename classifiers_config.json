@@ -5,8 +5,7 @@
 
   "tuned_parameters": {
       "Random Forest": {
-          "max_features": ["sqrt", "log2"],
-          "bootstrap": [true, false]
+
       }
   },
   "hyperparameter_tuning": false,

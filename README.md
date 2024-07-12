@@ -52,17 +52,16 @@ python main.py
 The results, including logs and evaluation metrics, will be saved in the results.log file and displayed in the console.
 
 **Project Structure:**
-Description of Key Files and Directories:
-Dataset-Approved/: Contains the dataset file.
-utils/logger.py: Contains functions for logging.
-utils/plotter.py: Contains functions for plotting graphs and visualizations.
-preprocessing/preprocess.py: Contains functions for data loading and preprocessing.
-models/classifiers.py: Contains functions for training and evaluating classifiers.
-models/ensemble.py: Contains functions for training and evaluating ensemble classifiers.
-main.py: The main script to run the project.
-classifiers_config.json: Configuration file for specifying classifiers and their parameters.
-requirements.txt: Lists the Python packages required to run the project.
-README.md: Provides an overview and instructions for the project.
+1. Description of Key Files and Directories:
+2. Dataset-Approved/: Contains the dataset file.
+3. utils/logger.py: Contains functions for logging output.
+4. utils/plotter.py: Contains functions for plotting graphs and visualizations.
+5. preprocessing/preprocess.py: Contains functions for data loading and preprocessing.
+6. models/classifiers.py: Contains functions for training and evaluating classifiers.
+7. models/ensemble.py: Contains functions for training and evaluating ensemble classifiers.
+8. main.py: The main script to run the project.
+9. classifiers_config.json: Configuration file for specifying classifiers , their parameters , crossvalidation and ensemble method.
+
 
 
 

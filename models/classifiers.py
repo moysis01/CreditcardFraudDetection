@@ -13,7 +13,7 @@ logger = setup_logger(__name__)
 
 # Define all classifiers
 all_classifiers = {
-    'Random Forest': RandomForestClassifier(max_depth=100, min_samples_split=5, n_estimators=50)
+    'Random Forest': RandomForestClassifier(n_estimators=50)#max_depth=100,min_samples_split=5, bootstrap=False,max_features='sqrt')
 }
 
 def find_best_threshold(y_test, y_proba):
