@@ -17,8 +17,8 @@ logger = setup_logger(__name__)
 
 # Define all classifiers
 all_classifiers = {
-    #'Random Forest': RandomForestClassifier(max_depth=100,min_samples_split=5, bootstrap=False,max_features='sqrt',n_estimators=50),
-    #'XGBoost': XGBClassifier(),
+    'Random Forest': RandomForestClassifier(),
+    'XGBoost': XGBClassifier(),
     'MLP': MLPClassifier()
 }
 

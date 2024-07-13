@@ -1,7 +1,7 @@
 import pandas as pd
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from imblearn.over_sampling import SMOTE
-from sklearn.model_selection import train_test_split
 from utils.logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -9,7 +9,7 @@ logger = setup_logger(__name__)
 def load_data(file_path):
     logger.info("Loading data from file: %s", file_path)
     df = pd.read_csv(file_path)
-    df = df.sample(frac=0.1, random_state=25)  #  30% of the data to avoid memory issues
+    #df = df.sample(frac=0.50, random_state=25, stratify=df['Class'])  # Use 10% of the data with stratified sampling
     logger.info("Data loaded. Shape: %s", df.shape)
     return df
 

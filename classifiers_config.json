@@ -1,6 +1,8 @@
 {
   "classifiers": [
-    "MLP"
+    "MLP",
+    "Random Forest",
+    "XGBoost"
   ],
   "tuned_parameters": {
     "MLP": {
@@ -11,8 +13,8 @@
       "learning_rate": ["constant", "adaptive"]
     }
   },
-  "hyperparameter_tuning": true,
-  "cross_validation": false,
-  "ensemble": false,
-  "voting": "soft"
+  "hyperparameter_tuning": false,
+  "cross_validation": true,
+  "ensemble": true,
+  "voting": "hard"
 }
