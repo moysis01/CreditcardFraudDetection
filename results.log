@@ -1,0 +1,150 @@
+2024-07-15 14:55:09,334 - __main__ - INFO - Results for MLP:
+2024-07-15 14:55:09,334 - __main__ - INFO - Results for MLP Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     56651
+           1       0.88      0.78      0.83        95
+
+    accuracy                           1.00     56746
+   macro avg       0.94      0.89      0.91     56746
+weighted avg       1.00      1.00      1.00     56746
+
+2024-07-15 14:55:09,334 - __main__ - INFO - Results for MLP Confusion Matrix:
+[[56641    10]
+ [   21    74]]
+2024-07-15 14:55:09,336 - __main__ - INFO - Results for MLP Accuracy: 0.9994537059880872, Precision: 0.8809523809523809, Recall: 0.7789473684210526, F1 Score: 0.8268156424581005, ROC AUC: 0.9669760091567112, MCC: 0.8281131604954156
+2024-07-15 14:55:09,336 - __main__ - INFO - Results for Random Forest:
+2024-07-15 14:55:09,336 - __main__ - INFO - Results for Random Forest Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     56651
+           1       0.90      0.83      0.86        95
+
+    accuracy                           1.00     56746
+   macro avg       0.95      0.92      0.93     56746
+weighted avg       1.00      1.00      1.00     56746
+
+2024-07-15 14:55:09,336 - __main__ - INFO - Results for Random Forest Confusion Matrix:
+[[56642     9]
+ [   16    79]]
+2024-07-15 14:55:09,336 - __main__ - INFO - Results for Random Forest Accuracy: 0.9995594403129736, Precision: 0.8977272727272727, Recall: 0.8315789473684211, F1 Score: 0.8633879781420765, ROC AUC: 0.9735110357135889, MCC: 0.8638018818111478
+2024-07-15 14:55:09,336 - __main__ - INFO - Results for XGBoost:
+2024-07-15 14:55:09,336 - __main__ - INFO - Results for XGBoost Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     56651
+           1       0.92      0.84      0.88        95
+
+    accuracy                           1.00     56746
+   macro avg       0.96      0.92      0.94     56746
+weighted avg       1.00      1.00      1.00     56746
+
+2024-07-15 14:55:09,336 - __main__ - INFO - Results for XGBoost Confusion Matrix:
+[[56644     7]
+ [   15    80]]
+2024-07-15 14:55:09,336 - __main__ - INFO - Results for XGBoost Accuracy: 0.9996123074754167, Precision: 0.9195402298850575, Recall: 0.8421052631578947, F1 Score: 0.879120879120879, ROC AUC: 0.979861553054761, MCC: 0.8797801645457087
+2024-07-15 14:55:09,336 - __main__ - INFO - Results for KNN:
+2024-07-15 14:55:09,336 - __main__ - INFO - Results for KNN Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     56651
+           1       0.78      0.84      0.81        95
+
+    accuracy                           1.00     56746
+   macro avg       0.89      0.92      0.90     56746
+weighted avg       1.00      1.00      1.00     56746
+
+2024-07-15 14:55:09,337 - __main__ - INFO - Results for KNN Confusion Matrix:
+[[56628    23]
+ [   15    80]]
+2024-07-15 14:55:09,337 - __main__ - INFO - Results for KNN Accuracy: 0.9993303492757198, Precision: 0.7766990291262136, Recall: 0.8421052631578947, F1 Score: 0.8080808080808081, ROC AUC: 0.9312741262522424, MCC: 0.8084083800078827
+2024-07-15 15:20:08,423 - __main__ - INFO - Results for Ensemble Voting Classifier:
+2024-07-15 15:20:08,423 - __main__ - INFO - Results for Ensemble Voting Classifier Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     56651
+           1       0.99      0.77      0.86        95
+
+    accuracy                           1.00     56746
+   macro avg       0.99      0.88      0.93     56746
+weighted avg       1.00      1.00      1.00     56746
+
+2024-07-15 15:20:08,423 - __main__ - INFO - Results for Ensemble Voting Classifier Confusion Matrix:
+[[56650     1]
+ [   22    73]]
+2024-07-15 15:20:08,423 - __main__ - INFO - Results for Ensemble Voting Classifier Accuracy: 0.9995946850879357, Precision: 0.9864864864864865, Recall: 0.7684210526315789, F1 Score: 0.8639053254437868, ROC AUC: 0.9814537579584696, MCC: 0.8704718707160014
+2024-07-15 19:24:34,126 - __main__ - INFO - Results for MLP:
+2024-07-15 19:24:34,128 - __main__ - INFO - Results for MLP Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     56651
+           1       0.89      0.85      0.87        95
+
+    accuracy                           1.00     56746
+   macro avg       0.94      0.93      0.94     56746
+weighted avg       1.00      1.00      1.00     56746
+
+2024-07-15 19:24:34,129 - __main__ - INFO - Results for MLP Confusion Matrix:
+[[56641    10]
+ [   14    81]]
+2024-07-15 19:24:34,129 - __main__ - INFO - Results for MLP Accuracy: 0.9995770627004547, Precision: 0.8901098901098901, Recall: 0.8526315789473684, F1 Score: 0.8709677419354839, ROC AUC: 0.9680382842686848, MCC: 0.8709581100560579
+2024-07-15 19:24:34,130 - __main__ - INFO - Results for Random Forest:
+2024-07-15 19:24:34,130 - __main__ - INFO - Results for Random Forest Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     56651
+           1       0.91      0.82      0.86        95
+
+    accuracy                           1.00     56746
+   macro avg       0.95      0.91      0.93     56746
+weighted avg       1.00      1.00      1.00     56746
+
+2024-07-15 19:24:34,131 - __main__ - INFO - Results for Random Forest Confusion Matrix:
+[[56643     8]
+ [   17    78]]
+2024-07-15 19:24:34,131 - __main__ - INFO - Results for Random Forest Accuracy: 0.9995594403129736, Precision: 0.9069767441860465, Recall: 0.8210526315789474, F1 Score: 0.861878453038674, ROC AUC: 0.974128296151227, MCC: 0.8627289614980527
+2024-07-15 19:24:34,132 - __main__ - INFO - Results for XGBoost:
+2024-07-15 19:24:34,132 - __main__ - INFO - Results for XGBoost Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     56651
+           1       0.92      0.84      0.88        95
+
+    accuracy                           1.00     56746
+   macro avg       0.96      0.92      0.94     56746
+weighted avg       1.00      1.00      1.00     56746
+
+2024-07-15 19:24:34,133 - __main__ - INFO - Results for XGBoost Confusion Matrix:
+[[56644     7]
+ [   15    80]]
+2024-07-15 19:24:34,133 - __main__ - INFO - Results for XGBoost Accuracy: 0.9996123074754167, Precision: 0.9195402298850575, Recall: 0.8421052631578947, F1 Score: 0.879120879120879, ROC AUC: 0.979861553054761, MCC: 0.8797801645457087
+2024-07-15 19:24:34,134 - __main__ - INFO - Results for KNN:
+2024-07-15 19:24:34,135 - __main__ - INFO - Results for KNN Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     56651
+           1       0.78      0.84      0.81        95
+
+    accuracy                           1.00     56746
+   macro avg       0.89      0.92      0.90     56746
+weighted avg       1.00      1.00      1.00     56746
+
+2024-07-15 19:24:34,137 - __main__ - INFO - Results for KNN Confusion Matrix:
+[[56628    23]
+ [   15    80]]
+2024-07-15 19:24:34,140 - __main__ - INFO - Results for KNN Accuracy: 0.9993303492757198, Precision: 0.7766990291262136, Recall: 0.8421052631578947, F1 Score: 0.8080808080808081, ROC AUC: 0.9312741262522424, MCC: 0.8084083800078827
+2024-07-15 20:16:29,186 - __main__ - INFO - Results for Ensemble Voting Classifier:
+2024-07-15 20:16:29,190 - __main__ - INFO - Results for Ensemble Voting Classifier Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     56651
+           1       0.93      0.82      0.87        95
+
+    accuracy                           1.00     56746
+   macro avg       0.96      0.91      0.94     56746
+weighted avg       1.00      1.00      1.00     56746
+
+2024-07-15 20:16:29,192 - __main__ - INFO - Results for Ensemble Voting Classifier Confusion Matrix:
+[[56645     6]
+ [   17    78]]
+2024-07-15 20:16:29,193 - __main__ - INFO - Results for Ensemble Voting Classifier Accuracy: 0.9995946850879357, Precision: 0.9285714285714286, Recall: 0.8210526315789474, F1 Score: 0.8715083798882681, ROC AUC: 0.9822126055284014, MCC: 0.8729612615804188

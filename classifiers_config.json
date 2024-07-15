@@ -11,7 +11,7 @@
     }
   },
   "hyperparameter_tuning": false,
-  "cross_validation": false,
+  "cross_validation": true,
   "ensemble": true,
   "voting": "soft"
 }
