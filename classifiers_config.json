@@ -3,18 +3,15 @@
     "MLP",
     "Random Forest",
     "XGBoost"
+    "KNN"
   ],
   "tuned_parameters": {
     "MLP": {
-      "hidden_layer_sizes": ["50","100","50"],
-      "activation": ["relu", "tanh", "logistic"],
-      "solver": ["adam", "sgd"],
-      "alpha": [0.0001, 0.001, 0.01],
-      "learning_rate": ["constant", "adaptive"]
+      
     }
   },
   "hyperparameter_tuning": false,
-  "cross_validation": true,
+  "cross_validation": false,
   "ensemble": true,
-  "voting": "hard"
+  "voting": "soft"
 }

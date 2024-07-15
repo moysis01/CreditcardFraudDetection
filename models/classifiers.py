@@ -1,25 +1,25 @@
-import os
 import numpy as np
-import pandas as pd
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, precision_recall_curve
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
 from imblearn.pipeline import Pipeline as ImbPipeline
 from xgboost import XGBClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from imblearn.over_sampling import SMOTE
 from sklearn.preprocessing import MinMaxScaler
 from utils.logger import log_memory_usage, setup_logger
 from utils.plotter import plot_feature_importance, plot_roc_pr_curves, plot_confusion_matrix
 
-# Initialize logger
+
 logger = setup_logger(__name__)
 
-# Define all classifiers
+
 all_classifiers = {
     'Random Forest': RandomForestClassifier(),
     'XGBoost': XGBClassifier(),
-    'MLP': MLPClassifier()
+    'MLP': MLPClassifier(),
+    'KNN': KNeighborsClassifier()
 }
 
 def find_best_threshold(y_test, y_proba):
@@ -53,7 +53,7 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, best_estimators, config
             recall = TP / (FN + TP) if FN + TP != 0 else float('NaN')
             f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) != 0 else float('NaN')
 
-            # Calculate Matthews Correlation Coefficient (MCC)
+            #Matthews Correlation Coefficient (MCC)
             MCC_num = (TN * TP) - (FP * FN)
             MCC_denom = np.sqrt((FP + TP) * (FN + TP) * (TN + FP) * (TN + FN))
             MCC = MCC_num / MCC_denom if MCC_denom != 0 else float('NaN')
@@ -99,8 +99,6 @@ def hyperparameter_tuning(X_train, y_train, config, logger):
     for name in selected_classifiers:
         if name in tuned_parameters:
             logger.info("Hyperparameter tuning for %s...", name)
-            
-            # Define the pipeline with SMOTE, scaling, and classifier
             pipeline = ImbPipeline(steps=[
                 ('smote', SMOTE(random_state=25)),
                 ('scaler', MinMaxScaler(feature_range=(-1, 1))),
@@ -111,7 +109,7 @@ def hyperparameter_tuning(X_train, y_train, config, logger):
             grid_search = GridSearchCV(
                 estimator=pipeline,
                 param_grid=param_grid,
-                scoring='precision',
+                scoring='accuracy',
                 cv=StratifiedKFold(n_splits=5, shuffle=True, random_state=25),
                 n_jobs=-1
             )
@@ -121,7 +119,7 @@ def hyperparameter_tuning(X_train, y_train, config, logger):
             best_estimators[name] = grid_search.best_estimator_
             logger.info("Best parameters for %s: %s", name, grid_search.best_params_)
         else:
-            # If no tuning is specified, use the default pipeline
+            # If no tuning is specified using the default pipeline
             pipeline = ImbPipeline(steps=[
                 ('smote', SMOTE(random_state=25)),
                 ('scaler', MinMaxScaler(feature_range=(-1, 1))),
@@ -147,11 +145,9 @@ def cross_validate_models(X, y, config, logger, best_estimators):
                 X_train, X_test = X.iloc[train_index], X.iloc[test_index]
                 y_train, y_test = y.iloc[train_index], y.iloc[test_index]
 
-                # Fit the model using the training data
                 clf.fit(X_train, y_train)
                 y_pred = clf.predict(X_test)
 
-                # Calculate metrics
                 cm = confusion_matrix(y_test, y_pred)
                 TN, FP, FN, TP = cm.ravel()
                 accuracy = (TP + TN) / (TP + TN + FP + FN)
@@ -159,7 +155,7 @@ def cross_validate_models(X, y, config, logger, best_estimators):
                 recall = TP / (FN + TP) if FN + TP != 0 else float('NaN')
                 f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) != 0 else float('NaN')
                 
-                # Calculate Matthews Correlation Coefficient (MCC)
+                #Matthews Correlation Coefficient (MCC)
                 MCC_num = (TN * TP) - (FP * FN)
                 MCC_denom = np.sqrt((FP + TP) * (FN + TP) * (TN + FP) * (TN + FN))
                 MCC = MCC_num / MCC_denom if MCC_denom != 0 else float('NaN')
@@ -170,7 +166,6 @@ def cross_validate_models(X, y, config, logger, best_estimators):
                 f1_scores.append(f1_score)
                 mccs.append(MCC)
 
-            # Log the results for each metric
             logger.info("Cross-validation accuracies for %s: %s", name, accuracies)
             logger.info("Mean accuracy for %s: %f", name, np.mean(accuracies))
             logger.info("Cross-validation precisions for %s: %s", name, precisions)

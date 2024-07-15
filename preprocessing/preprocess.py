@@ -9,7 +9,7 @@ logger = setup_logger(__name__)
 def load_data(file_path):
     logger.info("Loading data from file: %s", file_path)
     df = pd.read_csv(file_path)
-    #df = df.sample(frac=0.50, random_state=25, stratify=df['Class'])  # Use 10% of the data with stratified sampling
+    #df = df.sample(frac=0.50, random_state=25)  # Use 50% of the data 
     logger.info("Data loaded. Shape: %s", df.shape)
     return df
 

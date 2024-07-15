@@ -30,7 +30,7 @@ if __name__ == "__main__":
         logger.info("Loading dataset...")
         path_home = 'C:\\Users\\ke1no\\OneDrive - Sheffield Hallam University\\Year3\\Disseration\\Dataset-Approved\\creditcard.csv'
         path_library = 'C:\\Users\\c0003255\\OneDrive - Sheffield Hallam University\\Year3\\Disseration\\Dataset-Approved\\creditcard.csv'
-        df = load_data(path_library) 
+        df = load_data(path_home) 
         log_memory_usage(logger)
 
         logger.info("Preprocessing data...")
@@ -66,7 +66,7 @@ if __name__ == "__main__":
             logger.info("Results for Ensemble Voting Classifier:")
             logger.info(f"Results for Ensemble Voting Classifier Classification Report:\n{voting_results['classification_report']}")
             logger.info(f"Results for Ensemble Voting Classifier Confusion Matrix:\n{voting_results['confusion_matrix']}")
-            logger.info(f"Results for Ensemble Voting Classifier Accuracy: {voting_results['accuracy']}, ROC AUC: {voting_results['roc_auc']}")
+            logger.info(f"Results for Ensemble Voting Classifier Accuracy: {voting_results['accuracy']}, Precision: {voting_results['precision']}, Recall: {voting_results['recall']}, F1 Score: {voting_results['f1_score']}, ROC AUC: {voting_results['roc_auc']}, MCC: {voting_results['mcc']}")
 
     except Exception as e:
         logger.error(f"An error occurred in the main execution: {e}")
