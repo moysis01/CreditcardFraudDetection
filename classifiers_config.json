@@ -2,7 +2,7 @@
   "classifiers": [
     "MLP",
     "Random Forest",
-    "XGBoost"
+    "XGBoost",
     "KNN"
   ],
   "tuned_parameters": {
