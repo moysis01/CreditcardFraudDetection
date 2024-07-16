@@ -1,10 +1,16 @@
 import json
 import logging
+import numpy as np
+from classifiers.cv import cross_validate_models
+from classifiers.ensemble import train_and_evaluate_voting_classifier, get_voting_classifier
+from classifiers.hypertuning import hyperparameter_tuning
+from classifiers.train import train
 from utils import setup_logger, log_memory_usage
 from preprocessing import load_data, preprocess_data
-from models.classifiers import train_and_evaluate, hyperparameter_tuning, cross_validate_models, all_classifiers
-from models.ensemble import train_and_evaluate_voting_classifier
+from classifiers.classifier_init import all_classifiers
+from utils.plotter import plot_training_results, plot_cross_validation_results
 
+# Initialize logger
 logger = setup_logger(__name__, log_file='results.log', console_level=logging.INFO, file_level=logging.INFO)
 
 def load_config(config_path):
@@ -12,62 +18,106 @@ def load_config(config_path):
     try:
         with open(config_path, 'r') as file:
             config = json.load(file)
-        logger.info("Configuration loaded successfully.")
+        logger.info("Configuration loaded successfully from %s", config_path)
         return config
     except json.JSONDecodeError as e:
-        logger.error(f"Error decoding JSON from config file: {e}")
+        logger.error("Error decoding JSON from config file: %s", e)
         raise
     except FileNotFoundError:
-        logger.error("Configuration file not found.")
+        logger.error("Configuration file not found at %s", config_path)
         raise
 
-if __name__ == "__main__":
+def main():
+    logger.info("Starting script execution...")
     try:
+        # Load configuration
         logger.info("Loading configuration...")
-        config = load_config('classifiers_config.json')
+        config = load_config('configs/config.json')  # Adjust path if necessary
         log_memory_usage(logger)
 
+        # Load dataset
         logger.info("Loading dataset...")
-        path_home = 'C:\\Users\\ke1no\\OneDrive - Sheffield Hallam University\\Year3\\Disseration\\Dataset-Approved\\creditcard.csv'
-        path_library = 'C:\\Users\\c0003255\\OneDrive - Sheffield Hallam University\\Year3\\Disseration\\Dataset-Approved\\creditcard.csv'
-        df = load_data(path_home) 
+        path = 'C:\\Users\\ke1no\\OneDrive - Sheffield Hallam University\\Year3\\Disseration\\Dataset-Approved\\creditcard.csv'
+        df = load_data(path)
+        logger.info("Dataset loaded with shape: %s", df.shape)
         log_memory_usage(logger)
 
+        # Preprocess data
         logger.info("Preprocessing data...")
-        X_train, X_test, y_train, y_test, X, y = preprocess_data(df)
+        X_train, X_test, y_train, y_test, X, y = preprocess_data(df, config)
+        logger.info("Data preprocessing complete.")
         log_memory_usage(logger)
 
+        # Hyperparameter tuning
         best_estimators = {}
         if config.get('hyperparameter_tuning'):
-            logger.info("Hyperparameter tuning...")
+            logger.info("Starting hyperparameter tuning...")
             best_estimators = hyperparameter_tuning(X_train, y_train, config, logger)
+            logger.info("Hyperparameter tuning complete.")
             log_memory_usage(logger)
-        else:
-            best_estimators = {name: all_classifiers[name] for name in config['classifiers']}
 
+
+        # Use default classifiers for those not in best_estimators
+        for name in config['classifiers']:
+            if name not in best_estimators:
+                logger.info("Using default classifier for %s", name)
+                best_estimators[name] = all_classifiers[name]
+
+        # Cross-validation
         if config.get('cross_validation'):
-            logger.info("Cross-validating models...")
-            cross_validate_models(X, y, config, logger, best_estimators)
+            logger.info("Starting cross-validation...")
+            cv_results = cross_validate_models(X, y, config, logger, best_estimators)
+            logger.info("Cross-validation complete.")
             log_memory_usage(logger)
 
-        logger.info("Training and evaluating classifiers...")
-        results = train_and_evaluate(X_train, X_test, y_train, y_test, best_estimators, config)
-        log_memory_usage(logger)
-        for name, metrics in results.items():
-            logger.info(f"Results for {name}:")
-            logger.info(f"Results for {name} Classification Report:\n{metrics['classification_report']}")
-            logger.info(f"Results for {name} Confusion Matrix:\n{metrics['confusion_matrix']}")
-            logger.info(f"Results for {name} Accuracy: {metrics['accuracy']}, Precision: {metrics['precision']}, Recall: {metrics['recall']}, F1 Score: {metrics['f1_score']}, ROC AUC: {metrics['roc_auc']}, MCC: {metrics['mcc']}")
+            # Log cross-validation results
+            for name, metrics in cv_results.items():
+                logger.info(f"\nCross-validation results for {name}:")
+                for metric_name, values in metrics.items():
+                    if metric_name not in ["y_preds", "y_probas"]: 
+                        mean_value = np.mean(values)
+                        logger.info(f"Results for Cross-validation {name}: Mean {metric_name}: {mean_value:.4f}")
 
+            # Plot cross-validation results
+            plot_cross_validation_results(cv_results, X_train, X.columns, best_estimators)
+
+        # Train and evaluate classifiers
+        logger.info("Training and evaluating classifiers...")
+        results = train(X_train, X_test, y_train, y_test, best_estimators, config)
+        logger.info("Training and evaluation complete.")
+        log_memory_usage(logger)
+
+        # Log individual classifier results
+        for name, metrics in results.items():
+            logger.info(f"\nResults for {name}:")
+            logger.info(f"Results for {name} Classification Report:\n{metrics.get('classification_report', 'N/A')}")
+            logger.info(f"Results for {name} Confusion Matrix:\n{metrics.get('confusion_matrix', 'N/A')}")
+            logger.info(f"Results for {name} Accuracy: {metrics.get('accuracy', 'N/A'):.4f}, Precision: {metrics.get('precision', 'N/A'):.4f}, Recall: {metrics.get('recall', 'N/A'):.4f}, F1 Score: {metrics.get('f1_score', 'N/A'):.4f}, ROC AUC: {metrics.get('roc_auc', 'N/A'):.4f}, MCC: {metrics.get('mcc', 'N/A'):.4f}")
+        plot_training_results(results, X_train, y_test, best_estimators)
+
+        # Ensemble Voting Classifier
         if config.get('ensemble'):
             logger.info("Training and evaluating ensemble voting classifier...")
             voting_results = train_and_evaluate_voting_classifier(X_train, X_test, y_train, y_test, best_estimators, config)
+            logger.info("Ensemble voting classifier training complete.")
             log_memory_usage(logger)
-            logger.info("Results for Ensemble Voting Classifier:")
-            logger.info(f"Results for Ensemble Voting Classifier Classification Report:\n{voting_results['classification_report']}")
-            logger.info(f"Results for Ensemble Voting Classifier Confusion Matrix:\n{voting_results['confusion_matrix']}")
-            logger.info(f"Results for Ensemble Voting Classifier Accuracy: {voting_results['accuracy']}, Precision: {voting_results['precision']}, Recall: {voting_results['recall']}, F1 Score: {voting_results['f1_score']}, ROC AUC: {voting_results['roc_auc']}, MCC: {voting_results['mcc']}")
+
+            # Log ensemble results
+            if "VotingClassifier" in voting_results:
+                metrics = voting_results["VotingClassifier"]
+                logger.info(f"\nResults for Ensemble Voting Classifier:")
+                logger.info(f"Results for Ensemble Voting Classifier Classification Report:\n{metrics.get('classification_report', 'N/A')}")
+                logger.info(f"Results for Ensemble Voting Classifier Confusion Matrix:\n{metrics.get('confusion_matrix', 'N/A')}")
+                logger.info(f"Results for Ensemble Voting Classifier Accuracy: {metrics.get('accuracy', 'N/A'):.4f}, Precision: {metrics.get('precision', 'N/A'):.4f}, Recall: {metrics.get('recall', 'N/A'):.4f}, F1 Score: {metrics.get('f1_score', 'N/A'):.4f}, ROC AUC: {metrics.get('roc_auc', 'N/A'):.4f}, MCC: {metrics.get('mcc', 'N/A'):.4f}")
+
+                # Plot Ensemble results
+                plot_training_results(voting_results, X_train, y_test, best_estimators)
+                logger.info("Ensemble results plotted.")
+                log_memory_usage(logger)
 
     except Exception as e:
-        logger.error(f"An error occurred in the main execution: {e}")
+        logger.error("An error occurred in the main execution: %s", e, exc_info=True)
         log_memory_usage(logger)
+
+if __name__ == "__main__":
+    main()

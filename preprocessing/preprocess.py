@@ -1,7 +1,8 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
-from imblearn.over_sampling import SMOTE
+from sklearn.preprocessing import MinMaxScaler,StandardScaler
+from imblearn.over_sampling import SMOTE, RandomOverSampler, ADASYN
+from imblearn.under_sampling import RandomUnderSampler, TomekLinks
 from utils.logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -9,11 +10,25 @@ logger = setup_logger(__name__)
 def load_data(file_path):
     logger.info("Loading data from file: %s", file_path)
     df = pd.read_csv(file_path)
-    #df = df.sample(frac=0.50, random_state=25)  # Use 50% of the data 
+    df = df.sample(frac=0.10, random_state=25)   
     logger.info("Data loaded. Shape: %s", df.shape)
     return df
 
-def preprocess_data(df):
+sampler_classes = {
+    "SMOTE": SMOTE,
+    "RANDOMOVERSAMPLER": RandomOverSampler,
+    "ADASYN": ADASYN,
+    "RANDOMUNDERSAMPLER": RandomUnderSampler,
+    "TOMEKLINKS": TomekLinks,
+}
+all_scalers = {
+    "MinMaxScaler": MinMaxScaler(feature_range=(-1, 1)),
+    "StandardScaler": StandardScaler()
+}
+      
+
+
+def preprocess_data(df, config):
     try:
         logger.info("Starting data preprocessing...")
 
@@ -21,25 +36,42 @@ def preprocess_data(df):
         df.drop_duplicates(inplace=True)
         logger.info(f"Dropped duplicates. Original shape: {original_shape}, New shape: {df.shape}")
 
-        X = df.drop('Class', axis=1)
+        X = df.drop(['Class','Time'], axis=1)
         y = df['Class']
         logger.info(f"Separated features and target. X shape: {X.shape}, y shape: {y.shape}")
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=25, stratify=y)
         logger.info(f"Data split into train and test sets. X_train shape: {X_train.shape}, X_test shape: {X_test.shape}, y_train shape: {y_train.shape}, y_test shape: {y_test.shape}")
 
-        logger.info("Class distribution before SMOTE: %s", y_train.value_counts().to_dict())
+        # Resampling (if specified in the config)
+        sampling_config = config.get('resampling', {})
+        if sampling_config:
+            method = sampling_config.get('method', None)
+            params = sampling_config.get('params', {})
 
-        logger.info("Applying SMOTE...")
-        smote = SMOTE(random_state=25)
-        X_train_res, y_train_res = smote.fit_resample(X_train, y_train)
-        logger.info(f"Applied SMOTE. Resampled X_train shape: {X_train_res.shape}, y_train shape: {y_train_res.shape}")
+            if method:
+                logger.info(f"Applying resampling method: {method}")
+                sampler_class = sampler_classes.get(method.upper())
+                if sampler_class:
+                    sampler = sampler_class(**params)
+                    X_train, y_train = sampler.fit_resample(X_train, y_train)
+                    logger.info(f"Class distribution after resampling: {y_train.value_counts().to_dict()}")  # Log y_train here for consistency
+                else:
+                    logger.warning(f"Invalid resampling method '{method}' specified in config. Skipping resampling.")
+            else:
+                logger.warning("No 'method' specified in the 'resampling' section of the config. Skipping resampling.")
 
-        logger.info("Class distribution after SMOTE: %s", y_train_res.value_counts().to_dict())
 
         logger.info("Scaling features...")
-        scaler = MinMaxScaler(feature_range=(-1, 1)).fit(X_train_res)
-        X_train_scaled = scaler.transform(X_train_res)
+
+        scaler_name = config.get('scaling', None) 
+        scaler_class = all_scalers.get(scaler_name)
+
+        if not scaler_class:
+            raise ValueError(f"Invalid scaler '{scaler_name}' in config.")
+
+        scaler = scaler_class.fit(X_train)
+        X_train_scaled = scaler.transform(X_train)
         X_test_scaled = scaler.transform(X_test)
         logger.info(f"Scaled features. Shapes - X_train: {X_train_scaled.shape}, X_test: {X_test_scaled.shape}")
 
@@ -48,7 +80,7 @@ def preprocess_data(df):
 
         logger.info("Preprocessing completed successfully.")
 
-        return X_train_scaled, X_test_scaled, y_train_res, y_test, X, y
+        return X_train_scaled, X_test_scaled, y_train, y_test, X, y
     except Exception as e:
         logger.error("An error occurred during preprocessing: %s", e)
         raise

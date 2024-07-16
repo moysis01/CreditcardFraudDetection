@@ -1,2 +1,2 @@
 from .logger import setup_logger,log_memory_usage
-from .plotter import plot_feature_importance,plot_roc_pr_curves,save_distribution_plots,save_boxplots,plot_confusion_matrix
+from .plotter import plot_feature_importance,plot_roc_pr_curves,save_distribution_plots,save_boxplots,plot_confusion_matrix,plot_precision_recall_curve,plot_roc_curve,plot_cross_validation_results,plot_training_results,precision_recall_curve
