@@ -5,6 +5,7 @@ from utils.logger import setup_logger
 from classifiers.utils import find_best_threshold, adjusted_prediction, calculate_metrics
 import numpy as np
 
+# Initialize logger
 logger = setup_logger(__name__)
 
 def get_voting_classifier(config: Dict[str, Any], best_estimators: Dict[str, Any]) -> VotingClassifier:
@@ -36,7 +37,10 @@ def train_and_evaluate_voting_classifier(
     best_estimators: Dict[str, Any],
     config: Dict[str, Any]
 ) -> Dict[str, Any]:
+    voting_results = {}
+
     try:
+        # Retrieve the VotingClassifier based on configuration
         voting_clf = get_voting_classifier(config, best_estimators)
         logger.info("Training Voting Classifier...")
         voting_clf.fit(X_train, y_train)
@@ -49,7 +53,7 @@ def train_and_evaluate_voting_classifier(
             y_proba_voting = voting_clf.predict_proba(X_test)[:, 1]
         else:
             logger.warning("Voting classifier doesn't support predict_proba. Using predictions as probability estimates.")
-            y_proba_voting = y_pred_voting  # Fallback
+            y_proba_voting = y_pred_voting  # Fallback - might not be ideal
 
         # Optimize threshold and make adjusted predictions
         best_threshold = find_best_threshold(y_test, y_proba_voting)
@@ -57,8 +61,7 @@ def train_and_evaluate_voting_classifier(
 
         # Calculate metrics
         metrics = calculate_metrics(y_test, y_pred_adj, y_proba_voting)
-
-        voting_results = {"VotingClassifier": metrics}
+        voting_results["VotingClassifier"] = metrics
 
         # Log probability statistics
         if 'y_proba_voting' in locals():

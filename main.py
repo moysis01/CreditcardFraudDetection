@@ -2,9 +2,10 @@ import json
 import logging
 import numpy as np
 from classifiers.cv import cross_validate_models
-from classifiers.ensemble import train_and_evaluate_voting_classifier, get_voting_classifier
+from classifiers.ensemble import train_and_evaluate_voting_classifier
 from classifiers.hypertuning import hyperparameter_tuning
-from classifiers.train import train
+from classifiers.train import training
+from classifiers.utils import evaluate_random_states
 from utils import setup_logger, log_memory_usage
 from preprocessing import load_data, preprocess_data
 from classifiers.classifier_init import all_classifiers
@@ -41,10 +42,28 @@ def main():
         df = load_data(path)
         logger.info("Dataset loaded with shape: %s", df.shape)
         log_memory_usage(logger)
+        
+        """
+        # Define a range of random states and convert to a list
+        random_state_range = (0, 100)  # Example range from 0 to 100
+        random_states = list(range(random_state_range[0], random_state_range[1] + 1))
+
+        # Find the best random state
+        logger.info("Evaluating random states to find the best one...")
+        best_random_state, random_state_results = evaluate_random_states(df, all_classifiers, config, random_states)
+        logger.info(f"Best random state found: {best_random_state}")
+
+        # Log detailed results for all evaluated random states
+        logger.info("Detailed random state evaluation results:")
+        for random_state, score in random_state_results.items():
+            logger.info(f"Random state {random_state}: Combined score = {score:.4f}")
+
+        # Log the best random state and its score
+        logger.info(f"Best random state found: {best_random_state} with a combined score of {random_state_results[best_random_state]:.4f}") """
 
         # Preprocess data
         logger.info("Preprocessing data...")
-        X_train, X_test, y_train, y_test, X, y = preprocess_data(df, config)
+        X_train, X_test, y_train, y_test, X, y = preprocess_data(df, config,25)
         logger.info("Data preprocessing complete.")
         log_memory_usage(logger)
 
@@ -55,7 +74,6 @@ def main():
             best_estimators = hyperparameter_tuning(X_train, y_train, config, logger)
             logger.info("Hyperparameter tuning complete.")
             log_memory_usage(logger)
-
 
         # Use default classifiers for those not in best_estimators
         for name in config['classifiers']:
@@ -83,7 +101,7 @@ def main():
 
         # Train and evaluate classifiers
         logger.info("Training and evaluating classifiers...")
-        results = train(X_train, X_test, y_train, y_test, best_estimators, config)
+        results = training(X_train, X_test, y_train, y_test, best_estimators, config)
         logger.info("Training and evaluation complete.")
         log_memory_usage(logger)
 

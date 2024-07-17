@@ -18,9 +18,8 @@ def cross_validate_models(X: pd.DataFrame, y: pd.Series, config: dict, logger: l
     if not best_estimators:
         best_estimators = {}
 
-    resampling_config = config.get('resampling', {})
-    resampling_method = resampling_config.get('method', None)
-    resampling_params = resampling_config.get('params', {})
+    resampling_methods = config.get('resampling', [])
+    resampling_params = config.get('resampling_params', {})
     scaler_name = config.get('scaling', None)
 
     cv_results = {}
@@ -35,11 +34,14 @@ def cross_validate_models(X: pd.DataFrame, y: pd.Series, config: dict, logger: l
         if clf is None:
             logger.warning(f"No tuned model found for {name}. Using default classifier with pipeline.")
             steps = []
-            if resampling_method:
-                sampler_class = sampler_classes.get(resampling_method)
+
+            # Apply resampling methods if specified
+            for method in resampling_methods:
+                sampler_class = sampler_classes.get(method.upper())
                 if not sampler_class:
-                    raise ValueError(f"Invalid resampling method '{resampling_method}' in config.")
-                steps.append(('resampler', sampler_class(**resampling_params)))
+                    raise ValueError(f"Invalid resampling method '{method}' specified in config.")
+                method_params = {key: resampling_params[key] for key in resampling_params if key in sampler_class._parameters}
+                steps.append(('resampler', sampler_class(**method_params)))
 
             if scaler_name:
                 scaler_class = all_scalers.get(scaler_name)

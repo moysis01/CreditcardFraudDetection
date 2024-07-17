@@ -1,11 +1,11 @@
-from classifiers.utils import find_best_threshold, adjusted_prediction, calculate_metrics
+from classifiers.utils import find_best_threshold, adjusted_prediction, calculate_metrics,evaluate_random_states
 from utils.logger import setup_logger
 from classifiers.classifier_init import all_classifiers
 import time
 
 logger = setup_logger(__name__)
 
-def train(X_train, X_test, y_train, y_test, best_estimators, config):
+def training(X_train, X_test, y_train, y_test, best_estimators, config):
     results = {}
 
     for name in config['classifiers']:
