@@ -2,8 +2,8 @@
   "classifiers": ["XGBoost"],
   "tuned_parameters": {
     "XGBoost": {
-      "learning_rate": [0.14],
-      "n_estimators": [274]
+      "learning_rate": [0.10,0.14],
+      "n_estimators": [170,174]
     }
   },
   "hyperparameter_tuning": true,
@@ -14,7 +14,7 @@
   "resampling": ["SMOTE"],
   "resampling_params": {
       "sampling_strategy": ["auto"],
-      "k_neighbors": [7]
+      "k_neighbors": [4,7]
     },
     
 

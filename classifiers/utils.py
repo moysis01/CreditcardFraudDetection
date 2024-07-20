@@ -1,8 +1,3 @@
-
-
-
-
-
 def find_best_threshold(y_test, y_proba, metric='f1'):
     from sklearn.metrics import (precision_recall_curve)
     """Find the best threshold for classification based on a specified metric."""
@@ -98,5 +93,5 @@ def calculate_n_iter(param_distributions, max_iter=100):
         total_combinations *= len(values)
     
     # Set n_iter as a fraction of the total combinations, up to a maximum limit
-    dynamic_n_iter = min(max_iter, int(total_combinations * 0.9))  # 90% of the total combinations, capped at max_iter
+    dynamic_n_iter = min(max_iter, int(total_combinations * 0.95))  # 90% of the total combinations, capped at max_iter
     return dynamic_n_iter

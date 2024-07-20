@@ -1,6 +1,7 @@
+import time
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.preprocessing import MinMaxScaler, RobustScaler, StandardScaler
 from imblearn.over_sampling import (
     SMOTE, ADASYN, RandomOverSampler, BorderlineSMOTE, SVMSMOTE, KMeansSMOTE, SMOTENC, SMOTEN
 )
@@ -18,7 +19,7 @@ logger = setup_logger(__name__)
 def load_data(file_path):
     logger.info("Loading data from file: %s", file_path)
     df = pd.read_csv(file_path)
-    df = df.sample(frac=0.30, random_state=25)   
+    df = df.sample(frac=0.10, random_state=25)   
     logger.info("Data loaded. Shape: %s", df.shape)
     return df
 
@@ -47,18 +48,20 @@ sampler_classes = {
 
 all_scalers = {
     "MinMaxScaler": MinMaxScaler(feature_range=(-1, 1)),
-    "StandardScaler": StandardScaler()
+    "StandardScaler": StandardScaler(),
+    "RobustScaler": RobustScaler()
 }
 
-def preprocess_data(df, config, random_state=None):
+def preprocess_data(df, config, random_state=25):
     try:
         logger.info("Starting data preprocessing...")
 
         original_shape = df.shape
         df.drop_duplicates(inplace=True)
+        df.drop(columns='Time',inplace=True)
         logger.info(f"Dropped duplicates. Original shape: {original_shape}, New shape: {df.shape}")
 
-        X = df.drop(['Class', 'Time'], axis=1)
+        X = df.drop(['Class'], axis=1)
         y = df['Class']
         logger.info(f"Separated features and target. X shape: {X.shape}, y shape: {y.shape}")
 
@@ -76,7 +79,11 @@ def preprocess_data(df, config, random_state=None):
                 # Initialize the sampler with parameters if provided
                 method_params = resampling_params.get(method.upper(), {})
                 sampler = sampler_class(**method_params)
+                start_time = time.time()
                 X_train, y_train = sampler.fit_resample(X_train, y_train)
+                end_time = time.time()
+                logger.info(f"Resamlping time with {method}: {end_time - start_time:.2f} seconds")
+
                 logger.info(f"Class distribution after resampling: {y_train.value_counts().to_dict()}")
             else:
                 logger.warning(f"Invalid resampling method '{method}' specified in config. Skipping resampling.")

@@ -1,0 +1,32 @@
+2024-07-18 13:48:30,219 - __main__ - INFO - 
+Results for XGBoost:
+2024-07-18 13:48:30,229 - __main__ - INFO - Results for XGBoost Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     56651
+           1       0.96      0.84      0.90        95
+
+    accuracy                           1.00     56746
+   macro avg       0.98      0.92      0.95     56746
+weighted avg       1.00      1.00      1.00     56746
+
+2024-07-18 13:48:30,230 - __main__ - INFO - Results for XGBoost Confusion Matrix:
+[[56648     3]
+ [   15    80]]
+2024-07-18 13:48:30,230 - __main__ - INFO - Results for XGBoost Accuracy: 0.9997, Precision: 0.9639, Recall: 0.8421, F1 Score: 0.8989, ROC AUC: 0.9834, MCC: 0.9008
+2024-07-20 02:07:56,842 - __main__ - INFO - 
+Results for XGBoost:
+2024-07-20 02:07:56,995 - __main__ - INFO - Results for XGBoost Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00      5683
+           1       1.00      0.92      0.96        12
+
+    accuracy                           1.00      5695
+   macro avg       1.00      0.96      0.98      5695
+weighted avg       1.00      1.00      1.00      5695
+
+2024-07-20 02:07:56,996 - __main__ - INFO - Results for XGBoost Confusion Matrix:
+[[5683    0]
+ [   1   11]]
+2024-07-20 02:07:56,996 - __main__ - INFO - Results for XGBoost Accuracy: 0.9998, Precision: 1.0000, Recall: 0.9167, F1 Score: 0.9565, ROC AUC: 0.9836, MCC: 0.9573
