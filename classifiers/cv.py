@@ -12,6 +12,19 @@ import pandas as pd
 logger = setup_logger(__name__)
 
 def cross_validate_models(X: pd.DataFrame, y: pd.Series, config: dict, logger: logging.Logger, best_estimators: dict = None) -> dict:
+    """
+    Perform cross-validation for the selected classifiers.
+
+    Args:
+        X (pd.DataFrame): Feature set.
+        y (pd.Series): Target labels.
+        config (dict): Configuration dictionary containing classifier and resampling settings.
+        logger (logging.Logger): Logger instance for logging.
+        best_estimators (dict): Dictionary of best estimators if available.
+
+    Returns:
+        dict: Dictionary containing cross-validation results.
+    """
     selected_classifiers = config['classifiers']
     skf = get_stratified_kfold()
 
@@ -25,7 +38,7 @@ def cross_validate_models(X: pd.DataFrame, y: pd.Series, config: dict, logger: l
     cv_results = {}
 
     for name in selected_classifiers:
-        logger.info("Cross-validating %s...", name)
+        logger.info(f"Cross-validating {name}...")
         log_memory_usage(logger)
 
         # Get the classifier or pipeline

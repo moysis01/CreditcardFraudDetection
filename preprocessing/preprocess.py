@@ -99,7 +99,7 @@ def preprocess_data(df, config, random_state=25):
         scaler = scaler_class.fit(X_train)
         X_train_scaled = scaler.transform(X_train)
         X_test_scaled = scaler.transform(X_test)
-        logger.info(f"Scaled features. Shapes - X_train: {X_train_scaled.shape}, X_test: {X_test_scaled.shape}")
+        logger.info(f"Scaled features with {scaler_name}. Shapes - X_train: {X_train_scaled.shape}, X_test: {X_test_scaled.shape}")
 
         X_train_scaled = pd.DataFrame(X_train_scaled, columns=X_train.columns)
         X_test_scaled = pd.DataFrame(X_test_scaled, columns=X_test.columns)

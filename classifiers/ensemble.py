@@ -9,6 +9,16 @@ import numpy as np
 logger = setup_logger(__name__)
 
 def get_voting_classifier(config: Dict[str, Any], best_estimators: Dict[str, Any]) -> VotingClassifier:
+    """
+    Create a VotingClassifier based on configuration and best estimators.
+
+    Parameters:
+    - config (Dict[str, Any]): Configuration dictionary.
+    - best_estimators (Dict[str, Any]): Dictionary of best estimators.
+
+    Returns:
+    - VotingClassifier: Configured VotingClassifier instance.
+    """
     estimators = [(name, best_estimators[name]) for name in config['classifiers'] if name in best_estimators]
 
     if not estimators:
@@ -22,6 +32,15 @@ def get_voting_classifier(config: Dict[str, Any], best_estimators: Dict[str, Any
     return VotingClassifier(estimators=estimators, voting=voting_type)
 
 def summarize_array(array: np.ndarray) -> str:
+    """
+    Provide a summary of a numpy array.
+
+    Parameters:
+    - array (np.ndarray): Array to summarize.
+
+    Returns:
+    - str: Summary of the array.
+    """
     if array.ndim == 1:
         return (f"Min: {np.min(array):.4f}, "
                 f"Max: {np.max(array):.4f}, "
@@ -37,6 +56,20 @@ def train_and_evaluate_voting_classifier(
     best_estimators: Dict[str, Any],
     config: Dict[str, Any]
 ) -> Dict[str, Any]:
+    """
+    Train and evaluate a VotingClassifier.
+
+    Parameters:
+    - X_train (pd.DataFrame): Training features.
+    - X_test (pd.DataFrame): Test features.
+    - y_train (pd.Series): Training labels.
+    - y_test (pd.Series): Test labels.
+    - best_estimators (Dict[str, Any]): Dictionary of best estimators.
+    - config (Dict[str, Any]): Configuration dictionary.
+
+    Returns:
+    - Dict[str, Any]: Dictionary containing evaluation metrics.
+    """
     voting_results = {}
 
     try:
@@ -65,7 +98,7 @@ def train_and_evaluate_voting_classifier(
 
         # Log probability statistics
         if 'y_proba_voting' in locals():
-            logger.info(f"  Probability Estimates: {summarize_array(y_proba_voting)}")
+            logger.info(f"Probability Estimates: {summarize_array(y_proba_voting)}")
 
     except ValueError as ve:
         logger.error(f"Error during voting classifier creation or training: {ve}")

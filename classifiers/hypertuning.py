@@ -91,18 +91,21 @@ def hyperparameter_tuning(X_train, y_train, config, logger):
                 verbose=1,
                 random_state=25
             )
-            start_time = time.time()
-            random_search.fit(X_train, y_train)  
-            end_time = time.time()
-            logger.info(f"Hyperparameter tuning completed for {name}. Duration: {end_time - start_time:.2f} seconds")
-            log_memory_usage(logger)
-            best_estimators[name] = random_search.best_estimator_
+            try:
+                start_time = time.time()
+                random_search.fit(X_train, y_train)  
+                end_time = time.time()
+                logger.info(f"Hyperparameter tuning completed for {name}. Duration: {end_time - start_time:.2f} seconds")
+                log_memory_usage(logger)
+                best_estimators[name] = random_search.best_estimator_
 
-            # Log the best parameters
-            logger.info("Best parameters for %s:", name)
-            best_params = random_search.best_params_
-            for param, value in best_params.items():
-                logger.info(f"  {param}: {value}")
+                # Log the best parameters
+                logger.info("Best parameters for %s:", name)
+                best_params = random_search.best_params_
+                for param, value in best_params.items():
+                    logger.info(f"  {param}: {value}")
+            except Exception as e:
+                logger.error(f"Error during hyperparameter tuning for {name}: {e}", exc_info=True)
         else:
             logger.warning(f"No tuning parameters specified for {name}. Using default settings.")
             best_estimators[name] = pipeline 
