@@ -16,5 +16,5 @@
   "resampling_params": {
     "k_neighbors": [4]  
   },
-  "scaling": "StandardScaler"
-}
+  "scaling": "MinMaxScaler"
+} 

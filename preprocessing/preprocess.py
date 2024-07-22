@@ -88,21 +88,25 @@ def preprocess_data(df, config, random_state=25):
             else:
                 logger.warning(f"Invalid resampling method '{method}' specified in config. Skipping resampling.")
 
+
         # Scaling
-        logger.info("Scaling features...")
         scaler_name = config.get('scaling', None)
-        scaler_class = all_scalers.get(scaler_name)
+        if scaler_name:
+            logger.info("Scaling features...")
+            scaler_class = all_scalers.get(scaler_name)
+            if not scaler_class:
+                raise ValueError(f"Invalid scaler '{scaler_name}' in config.")
+            scaler = scaler_class.fit(X_train)
+            X_train_scaled = scaler.transform(X_train)
+            X_test_scaled = scaler.transform(X_test)
+            logger.info(f"Scaled features with {scaler_name}. Shapes - X_train: {X_train_scaled.shape}, X_test: {X_test_scaled.shape}")
 
-        if not scaler_class:
-            raise ValueError(f"Invalid scaler '{scaler_name}' in config.")
-
-        scaler = scaler_class.fit(X_train)
-        X_train_scaled = scaler.transform(X_train)
-        X_test_scaled = scaler.transform(X_test)
-        logger.info(f"Scaled features with {scaler_name}. Shapes - X_train: {X_train_scaled.shape}, X_test: {X_test_scaled.shape}")
-
-        X_train_scaled = pd.DataFrame(X_train_scaled, columns=X_train.columns)
-        X_test_scaled = pd.DataFrame(X_test_scaled, columns=X_test.columns)
+            X_train_scaled = pd.DataFrame(X_train_scaled, columns=X_train.columns)
+            X_test_scaled = pd.DataFrame(X_test_scaled, columns=X_test.columns)
+        else:
+            logger.info("No scaling applied. Proceeding without scaling.")
+            X_train_scaled = X_train
+            X_test_scaled = X_test
 
         logger.info("Preprocessing completed successfully.")
         return X_train_scaled, X_test_scaled, y_train, y_test, X, y
