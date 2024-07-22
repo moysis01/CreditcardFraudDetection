@@ -149,5 +149,5 @@ def calculate_n_iter(param_distributions, max_iter=100):
         total_combinations *= len(values)
     
     # Set n_iter as a fraction of the total combinations, up to a maximum limit
-    dynamic_n_iter = min(max_iter, int(total_combinations * 0.95))  # 95% of the total combinations, capped at max_iter
+    dynamic_n_iter = min(max_iter, int(total_combinations * 0.9))  # 95% of the total combinations, capped at max_iter
     return dynamic_n_iter

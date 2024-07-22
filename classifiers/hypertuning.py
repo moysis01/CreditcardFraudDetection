@@ -1,19 +1,18 @@
-from sklearn.model_selection import RandomizedSearchCV
-from imblearn.pipeline import Pipeline as ImbPipeline
-from sklearn.metrics import make_scorer, f1_score
-from classifiers.utils import calculate_n_iter, get_stratified_kfold
-from classifiers.classifier_init import all_classifiers
-from preprocessing import all_scalers, sampler_classes
-from utils.logger import log_memory_usage, setup_logger
-import time
-
-# Set up logger
-logger = setup_logger(__name__)
-
-# Create a scorer object
-f1_scorer = make_scorer(f1_score, average='binary')
-
 def hyperparameter_tuning(X_train, y_train, config, logger):
+    from sklearn.model_selection import RandomizedSearchCV
+    from imblearn.pipeline import Pipeline as ImbPipeline
+    from sklearn.metrics import make_scorer, f1_score
+    from classifiers.utils import calculate_n_iter, get_stratified_kfold
+    from classifiers.classifier_init import all_classifiers
+    from preprocessing import all_scalers, sampler_classes
+    from utils.logger import log_memory_usage, setup_logger
+    import time
+    # Set up logger
+    logger = setup_logger(__name__)
+
+    # Create a scorer object
+    f1_scorer = make_scorer(f1_score, average='binary')
+
     """
     Performs hyperparameter tuning for the specified classifiers using RandomizedSearchCV.
 

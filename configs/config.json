@@ -2,28 +2,19 @@
   "classifiers": ["XGBoost"],
   "tuned_parameters": {
     "XGBoost": {
-      "max_depth": [3, 6, 9],
-      "min_child_weight":  [3,6,9], 
-      "subsample":  [3,6,9], 
-      "colsample_bytree":  [3,6,9],  
-      "gamma": [3,6,9]
+
     },
     "KNN": {
-      "n_neighbors": [5,6]
-      }
+      "n_neighbors": [5, 6]
+    }
   },
-  "hyperparameter_tuning": true,
+  "hyperparameter_tuning": false,
   "cross_validation": false,
   "ensemble": false,
   "voting": "soft",
-
   "resampling": ["SMOTE"],
   "resampling_params": {
-    "k_neighbors": 4
-    
-  
-    },
-    
-
+    "k_neighbors": [4]  
+  },
   "scaling": "StandardScaler"
 }
