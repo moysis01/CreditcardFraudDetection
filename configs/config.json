@@ -1,25 +1,29 @@
 {
-  "classifiers": ["XGBoost","KNN"],
+  "classifiers": ["XGBoost"],
   "tuned_parameters": {
     "XGBoost": {
-      "learning_rate": [0.10,0.14],
-      "n_estimators": [170,174]
+      "max_depth": [3, 6, 9],
+      "min_child_weight":  [3,6,9], 
+      "subsample":  [3,6,9], 
+      "colsample_bytree":  [3,6,9],  
+      "gamma": [3,6,9]
     },
     "KNN": {
       "n_neighbors": [5,6]
       }
   },
   "hyperparameter_tuning": true,
-  "cross_validation": true,
-  "ensemble": true,
+  "cross_validation": false,
+  "ensemble": false,
   "voting": "soft",
 
   "resampling": ["SMOTE"],
   "resampling_params": {
-      "sampling_strategy": ["auto"],
-      "k_neighbors": [4,7]
+    "k_neighbors": 4
+    
+  
     },
     
 
-  "scaling": "RobustScaler"
+  "scaling": "StandardScaler"
 }

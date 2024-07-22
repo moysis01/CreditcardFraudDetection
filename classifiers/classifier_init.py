@@ -6,7 +6,7 @@ from sklearn.neighbors import KNeighborsClassifier
 
 all_classifiers = {
     'Random Forest': RandomForestClassifier(),
-    'XGBoost': XGBClassifier(),
+    'XGBoost': XGBClassifier(n_estimators=174,learning_rate=0.12),
     'MLP': MLPClassifier(),
     'KNN': KNeighborsClassifier(),
     'SVM': SVC(probability=True)
