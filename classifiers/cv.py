@@ -1,15 +1,48 @@
 import time
 from imblearn.pipeline import Pipeline as ImbPipeline
+from sklearn.preprocessing import RobustScaler, StandardScaler
 from utils.logger import log_memory_usage, setup_logger
 from classifiers.utils import get_stratified_kfold, calculate_metrics
 from classifiers.classifier_init import all_classifiers
 from utils.logger import logging
-from preprocessing import sampler_classes, all_scalers
+from preprocessing import sampler_classes
 import numpy as np
 import pandas as pd
 
 # Initialize logger
 logger = setup_logger(__name__)
+
+def custom_scaling(X_train, X_test):
+    """
+    Apply custom scaling to the training and test sets.
+
+    Parameters:
+    X_train (pd.DataFrame): Training features.
+    X_test (pd.DataFrame): Test features.
+
+    Returns:
+    X_train_scaled (pd.DataFrame): Scaled training features.
+    X_test_scaled (pd.DataFrame): Scaled test features.
+    """
+    standard_scaler = StandardScaler()
+    robust_scaler = RobustScaler()
+
+    # Scale V1 to V28 with StandardScaler
+    features_v1_v28 = [f'V{i}' for i in range(1, 29)]
+    X_train_v1_v28 = standard_scaler.fit_transform(X_train[features_v1_v28])
+    X_test_v1_v28 = standard_scaler.transform(X_test[features_v1_v28])
+
+    # Scale Amount with RobustScaler
+    X_train_amount = robust_scaler.fit_transform(X_train[['Amount']])
+    X_test_amount = robust_scaler.transform(X_test[['Amount']])
+
+    # Combine scaled features
+    X_train_scaled = pd.DataFrame(X_train_v1_v28, columns=features_v1_v28)
+    X_train_scaled['Amount'] = X_train_amount
+    X_test_scaled = pd.DataFrame(X_test_v1_v28, columns=features_v1_v28)
+    X_test_scaled['Amount'] = X_test_amount
+
+    return X_train_scaled, X_test_scaled
 
 def cross_validate_models(X: pd.DataFrame, y: pd.Series, config: dict, logger: logging.Logger, best_estimators: dict = None) -> dict:
     """
@@ -56,11 +89,9 @@ def cross_validate_models(X: pd.DataFrame, y: pd.Series, config: dict, logger: l
                 method_params = {key: resampling_params[key] for key in resampling_params if key in sampler_class._parameters}
                 steps.append(('resampler', sampler_class(**method_params)))
 
+            # Custom scaling
             if scaler_name:
-                scaler_class = all_scalers.get(scaler_name)
-                if not scaler_class:
-                    raise ValueError(f"Invalid scaler '{scaler_name}' in config.")
-                steps.append(('scaler', scaler_class))
+                steps.append(('custom_scaler', 'passthrough'))  # Placeholder for custom scaling step
 
             steps.append(('classifier', all_classifiers[name]))
             clf = ImbPipeline(steps=steps)  # Use ImbPipeline when resampling is involved
@@ -74,9 +105,14 @@ def cross_validate_models(X: pd.DataFrame, y: pd.Series, config: dict, logger: l
 
             try:
                 split_start_time = time.time()  # Start timing for this split
+
+                # Apply custom scaling
+                if scaler_name:
+                    X_train, X_test = custom_scaling(X_train, X_test)
+
                 clf.fit(X_train, y_train)
                 split_end_time = time.time()  # End timing for this split
-                
+
                 logger.info(f"Cross-validating split {split_index} for {name}: {split_end_time - split_start_time:.2f} seconds")
 
                 y_pred = clf.predict(X_test)

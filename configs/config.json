@@ -1,12 +1,7 @@
 {
   "classifiers": ["XGBoost"],
   "tuned_parameters": {
-    "XGBoost": {
-
-    },
-    "KNN": {
-      "n_neighbors": [5, 6]
-    }
+    "XGBoost": {}
   },
   "hyperparameter_tuning": false,
   "cross_validation": false,
@@ -16,5 +11,5 @@
   "resampling_params": {
     "k_neighbors": [4]  
   },
-  "scaling": "MinMaxScaler"
-} 
+  "scaling": true 
+}
