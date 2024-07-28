@@ -1,5 +1,5 @@
 {
-  "classifiers": ["XGBoost"],
+  "classifiers": ["LogisticRegression"],
   "tuned_parameters": {
     "XGBoost": {}
   },
