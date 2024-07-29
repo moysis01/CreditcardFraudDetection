@@ -1,4 +1,5 @@
 from classifiers.utils import find_best_threshold, adjusted_prediction, calculate_metrics, evaluate_random_states
+from nn_model.model import train_and_evaluate_neural_network
 from utils.logger import setup_logger
 from classifiers.classifier_init import all_classifiers
 import time
@@ -66,34 +67,44 @@ def training(X_train, X_test, y_train, y_test, best_estimators, config):
 
     for name in config['classifiers']:
         logger.info(f"Starting training for {name}...")
-
-        try:
-            # Get the classifier or pipeline
-            clf = best_estimators.get(name)
-
-            if clf is None:
-                logger.warning(f"No tuned model found for {name}. Using default classifier.")
-                clf = all_classifiers.get(name)
-                if clf is None:
-                    raise ValueError(f"Classifier {name} is not available in all_classifiers.")
-
-            # Train the classifier
-            train_classifier(clf, X_train, y_train, name)
-
-            # Get predicted probabilities or decision function
-            y_proba = get_predictions(clf, X_test, name)
-
-            # Find best threshold and make predictions
+        
+        if name == 'Neural Network':
+            # Handle neural network separately
+            model = train_and_evaluate_neural_network(X_train, y_train, X_test, y_test)
+            y_proba = model.predict(X_test).ravel()
             best_threshold = find_best_threshold(y_test, y_proba)
-            y_pred_adj = adjusted_prediction(clf, X_test, best_threshold)
-
-            # Calculate metrics
+            y_pred_adj = (y_proba >= best_threshold).astype(int)
             metrics = calculate_metrics(y_test, y_pred_adj, y_proba)
             results[name] = metrics
+        else:
 
-            logger.info(f"Finished training and evaluation for {name}.")
+            try:
+                # Get the classifier or pipeline
+                clf = best_estimators.get(name)
 
-        except Exception as e:
-            logger.error(f"An error occurred while training {name}: {e}", exc_info=True)
+                if clf is None:
+                    logger.warning(f"No tuned model found for {name}. Using default classifier.")
+                    clf = all_classifiers.get(name)
+                    if clf is None:
+                        raise ValueError(f"Classifier {name} is not available in all_classifiers.")
+
+                # Train the classifier
+                train_classifier(clf, X_train, y_train, name)
+
+                # Get predicted probabilities or decision function
+                y_proba = get_predictions(clf, X_test, name)
+
+                # Find best threshold and make predictions
+                best_threshold = find_best_threshold(y_test, y_proba)
+                y_pred_adj = adjusted_prediction(clf, X_test, best_threshold)
+
+                # Calculate metrics
+                metrics = calculate_metrics(y_test, y_pred_adj, y_proba)
+                results[name] = metrics
+
+                logger.info(f"Finished training and evaluation for {name}.")
+
+            except Exception as e:
+                logger.error(f"An error occurred while training {name}: {e}", exc_info=True)
 
     return results

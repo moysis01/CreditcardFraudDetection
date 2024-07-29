@@ -1,10 +1,11 @@
 {
-  "classifiers": ["LogisticRegression"],
+  "classifiers": ["Neural Network","XGBoost","MLP","Random Forest","KNN"],
   "tuned_parameters": {
-    "XGBoost": {}
+    "XGBoost": {},
+    "Neural Network": {}
   },
   "hyperparameter_tuning": false,
-  "cross_validation": false,
+  "cross_validation": true,
   "ensemble": false,
   "voting": "soft",
   "resampling": ["SMOTE"],

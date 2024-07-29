@@ -1,0 +1,60 @@
+2024-07-28 23:11:10,357 - __main__ - INFO - 
+Results for Neural Network:
+2024-07-28 23:11:10,357 - __main__ - INFO - Results for Neural Network Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     56651
+           1       0.78      0.80      0.79        95
+
+    accuracy                           1.00     56746
+   macro avg       0.89      0.90      0.89     56746
+weighted avg       1.00      1.00      1.00     56746
+
+2024-07-28 23:11:10,357 - __main__ - INFO - Results for Neural Network Confusion Matrix:
+[[56629    22]
+ [   19    76]]
+2024-07-28 23:11:10,357 - __main__ - INFO - Results for Neural Network Accuracy: 0.9993, Precision: 0.7755, Recall: 0.8000, F1 Score: 0.7876, ROC AUC: 0.9636, MCC: 0.7873
+2024-07-28 23:20:18,447 - __main__ - INFO - 
+Results for Neural Network:
+2024-07-28 23:20:18,447 - __main__ - INFO - Results for Neural Network Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     56651
+           1       0.77      0.80      0.78        95
+
+    accuracy                           1.00     56746
+   macro avg       0.88      0.90      0.89     56746
+weighted avg       1.00      1.00      1.00     56746
+
+2024-07-28 23:20:18,447 - __main__ - INFO - Results for Neural Network Confusion Matrix:
+[[56628    23]
+ [   19    76]]
+2024-07-28 23:20:18,447 - __main__ - INFO - Results for Neural Network Accuracy: 0.9993, Precision: 0.7677, Recall: 0.8000, F1 Score: 0.7835, ROC AUC: 0.9625, MCC: 0.7833
+2024-07-29 11:47:08,779 - __main__ - INFO - Results for Cross-validation Neural Network: Mean accuracies: nan
+2024-07-29 11:47:08,781 - __main__ - INFO - Results for Cross-validation Neural Network: Mean precisions: nan
+2024-07-29 11:47:08,781 - __main__ - INFO - Results for Cross-validation Neural Network: Mean recalls: nan
+2024-07-29 11:47:08,781 - __main__ - INFO - Results for Cross-validation Neural Network: Mean f1_scores: nan
+2024-07-29 11:47:08,781 - __main__ - INFO - Results for Cross-validation Neural Network: Mean roc_aucs: nan
+2024-07-29 11:47:08,781 - __main__ - INFO - Results for Cross-validation Neural Network: Mean mccs: nan
+2024-07-29 12:00:52,114 - __main__ - INFO - Results for Cross-validation Neural Network: Mean accuracies: 0.9982
+2024-07-29 12:00:52,114 - __main__ - INFO - Results for Cross-validation Neural Network: Mean precisions: 0.8442
+2024-07-29 12:00:52,114 - __main__ - INFO - Results for Cross-validation Neural Network: Mean recalls: 0.2429
+2024-07-29 12:00:52,114 - __main__ - INFO - Results for Cross-validation Neural Network: Mean f1_scores: 0.3427
+2024-07-29 12:00:52,114 - __main__ - INFO - Results for Cross-validation Neural Network: Mean roc_aucs: 0.5738
+2024-07-29 12:00:52,114 - __main__ - INFO - Results for Cross-validation Neural Network: Mean mccs: 0.4123
+2024-07-29 12:04:44,147 - __main__ - INFO - 
+Results for Neural Network:
+2024-07-29 12:04:44,147 - __main__ - INFO - Results for Neural Network Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00      5683
+           1       0.85      0.92      0.88        12
+
+    accuracy                           1.00      5695
+   macro avg       0.92      0.96      0.94      5695
+weighted avg       1.00      1.00      1.00      5695
+
+2024-07-29 12:04:44,148 - __main__ - INFO - Results for Neural Network Confusion Matrix:
+[[5681    2]
+ [   1   11]]
+2024-07-29 12:04:44,148 - __main__ - INFO - Results for Neural Network Accuracy: 0.9995, Precision: 0.8462, Recall: 0.9167, F1 Score: 0.8800, ROC AUC: 0.9996, MCC: 0.8804

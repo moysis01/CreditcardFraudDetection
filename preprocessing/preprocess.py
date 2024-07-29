@@ -1,23 +1,41 @@
 import time
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler, RobustScaler, StandardScaler
-from imblearn.over_sampling import (
-    SMOTE, ADASYN, RandomOverSampler, BorderlineSMOTE, SVMSMOTE, KMeansSMOTE
-)
-from imblearn.under_sampling import (
-    RandomUnderSampler, NearMiss,
-)
+from sklearn.preprocessing import RobustScaler, StandardScaler
+from imblearn.over_sampling import (SMOTE, ADASYN, RandomOverSampler)
+from imblearn.under_sampling import (RandomUnderSampler, NearMiss,)
 from imblearn.combine import SMOTEENN, SMOTETomek
 from utils.logger import setup_logger
 
 # Set up logger
 logger = setup_logger(__name__)
 
-def load_data(file_path):
+def load_data(file_path, use_fraction=True, fraction=0.10):
+    """
+    Load the data from a CSV file and optionally use a fraction of the data ensuring Class 1 entries are included.
+
+    Parameters:
+    file_path (str): The path to the CSV file.
+    use_fraction (bool): Whether to use only a fraction of the data.
+    fraction (float): The fraction of the data to use.
+
+    Returns:
+    pd.DataFrame: The loaded (and optionally sampled) DataFrame.
+    """
     logger.info("Loading data from file: %s", file_path)
     df = pd.read_csv(file_path)
-    df = df.sample(frac=0.50, random_state=25)
+
+    if use_fraction:
+        df_class_1 = df[df['Class'] == 1]
+        df_class_0 = df[df['Class'] == 0]
+
+        df_class_0_sampled = df_class_0.sample(frac=fraction, random_state=25)
+        df_class_1_sampled = df_class_1.sample(n=len(df_class_1), random_state=25)  # Ensure all Class 1 entries are included
+
+        df_sampled = pd.concat([df_class_0_sampled, df_class_1_sampled])
+        logger.info("Data sampled. Shape: %s", df_sampled.shape)
+        return df_sampled
+
     logger.info("Data loaded. Shape: %s", df.shape)
     return df
 
@@ -27,9 +45,6 @@ sampler_classes = {
     "SMOTE": SMOTE,
     "ROS": RandomOverSampler,
     "ADASYN": ADASYN,
-    "BLSMOTE": BorderlineSMOTE,
-    "SVMSMOTE": SVMSMOTE,
-    "KMEANSSMOTE": KMeansSMOTE,
 
     # Undersampling
     "RUS": RandomUnderSampler,
@@ -83,7 +98,6 @@ def preprocess_data(df, config, random_state=25):
             logger.info("Scaling features...")
             standard_scaler = StandardScaler()
             robust_scaler = RobustScaler()
-            minmax_scaler= MinMaxScaler(feature_range=(-1,1))
 
             # Scale V1 to V28 with StandardScaler
             features_v1_v28 = [f'V{i}' for i in range(1, 29)]
@@ -105,6 +119,10 @@ def preprocess_data(df, config, random_state=25):
             logger.info("No scaling applied. Proceeding without scaling.")
             X_train_scaled = X_train
             X_test_scaled = X_test
+        
+        if 'Neural Network' in config['classifiers']:
+            X_train_scaled = X_train_scaled.values.reshape((X_train_scaled.shape[0], X_train_scaled.shape[1], 1))
+            X_test_scaled = X_test_scaled.values.reshape((X_test_scaled.shape[0], X_test_scaled.shape[1], 1))
 
         logger.info("Preprocessing completed successfully.")
         return X_train_scaled, X_test_scaled, y_train, y_test, X, y
