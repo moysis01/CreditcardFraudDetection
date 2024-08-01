@@ -48,7 +48,7 @@ def cross_validate_models(X: pd.DataFrame, y: pd.Series, config: dict, logger: l
             # Special handling for Neural Network model
             model = build_model()
             epochs = 200
-            batch_size = 1000
+            batch_size = 2048
             early_stopping = EarlyStopping(monitor='val_loss', patience=7, restore_best_weights=True)
             reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=7, min_lr=0.0001)
 

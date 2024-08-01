@@ -1,8 +1,12 @@
-from classifiers.utils import find_best_threshold, adjusted_prediction, calculate_metrics, evaluate_random_states
-from nn_model.model import train_and_evaluate_neural_network
+from classifiers.utils import find_best_threshold, adjusted_prediction, calculate_metrics
+from nn_model.model import DNNClassifier
 from utils.logger import setup_logger
 from classifiers.classifier_init import all_classifiers
 import time
+import numpy as np
+import pandas as pd
+
+from utils.plotter import plot_training_history 
 
 logger = setup_logger(__name__)
 
@@ -12,8 +16,8 @@ def train_classifier(clf, X_train, y_train, name):
 
     Parameters:
     clf: Classifier object.
-    X_train (pd.DataFrame): Training features.
-    y_train (pd.Series): Training labels.
+    X_train (pd.DataFrame or np.ndarray): Training features.
+    y_train (pd.Series or np.ndarray): Training labels.
     name (str): Classifier name.
 
     Returns:
@@ -32,7 +36,7 @@ def get_predictions(clf, X_test, name):
 
     Parameters:
     clf: Classifier object.
-    X_test (pd.DataFrame): Test features.
+    X_test (pd.DataFrame or np.ndarray): Test features.
     name (str): Classifier name.
 
     Returns:
@@ -53,10 +57,10 @@ def training(X_train, X_test, y_train, y_test, best_estimators, config):
     Train and evaluate classifiers.
 
     Parameters:
-    X_train (pd.DataFrame): Training features.
-    X_test (pd.DataFrame): Test features.
-    y_train (pd.Series): Training labels.
-    y_test (pd.Series): Test labels.
+    X_train (pd.DataFrame or np.ndarray): Training features.
+    X_test (pd.DataFrame or np.ndarray): Test features.
+    y_train (pd.Series or np.ndarray): Training labels.
+    y_test (pd.Series or np.ndarray): Test labels.
     best_estimators (dict): Dictionary of best estimators.
     config (dict): Configuration dictionary.
 
@@ -69,17 +73,19 @@ def training(X_train, X_test, y_train, y_test, best_estimators, config):
         logger.info(f"Starting training for {name}...")
         
         if name == 'Neural Network':
-            # Handle neural network separately
-            model = train_and_evaluate_neural_network(X_train, y_train, X_test, y_test)
-            y_proba = model.predict(X_test).ravel()
+            # Convert DataFrame to NumPy array and reshape for neural network
+            X_train_nn = X_train.values.reshape((X_train.shape[0], X_train.shape[1], 1)) if isinstance(X_train, pd.DataFrame) else X_train.reshape((X_train.shape[0], X_train.shape[1], 1))
+            X_test_nn = X_test.values.reshape((X_test.shape[0], X_test.shape[1], 1)) if isinstance(X_test, pd.DataFrame) else X_test.reshape((X_test.shape[0], X_test.shape[1], 1))
+            dnn_clf = DNNClassifier(input_shape=(29, 1))
+            dnn_clf.fit(X_train_nn, y_train)
+            plot_training_history(dnn_clf.model.history, save_dir='plots')
+            y_proba = dnn_clf.predict_proba(X_test_nn)[:, 1]
             best_threshold = find_best_threshold(y_test, y_proba)
             y_pred_adj = (y_proba >= best_threshold).astype(int)
             metrics = calculate_metrics(y_test, y_pred_adj, y_proba)
             results[name] = metrics
         else:
-
             try:
-                # Get the classifier or pipeline
                 clf = best_estimators.get(name)
 
                 if clf is None:
@@ -88,17 +94,18 @@ def training(X_train, X_test, y_train, y_test, best_estimators, config):
                     if clf is None:
                         raise ValueError(f"Classifier {name} is not available in all_classifiers.")
 
-                # Train the classifier
-                train_classifier(clf, X_train, y_train, name)
+                # Ensure X_train and X_test are 2D for non-neural network classifiers
+                if len(X_train.shape) > 2:
+                    X_train_reshaped = X_train.reshape(X_train.shape[0], -1)
+                    X_test_reshaped = X_test.reshape(X_test.shape[0], -1)
+                else:
+                    X_train_reshaped = X_train
+                    X_test_reshaped = X_test
 
-                # Get predicted probabilities or decision function
-                y_proba = get_predictions(clf, X_test, name)
-
-                # Find best threshold and make predictions
+                train_classifier(clf, X_train_reshaped, y_train, name)
+                y_proba = get_predictions(clf, X_test_reshaped, name)
                 best_threshold = find_best_threshold(y_test, y_proba)
-                y_pred_adj = adjusted_prediction(clf, X_test, best_threshold)
-
-                # Calculate metrics
+                y_pred_adj = adjusted_prediction(clf, X_test_reshaped, best_threshold)
                 metrics = calculate_metrics(y_test, y_pred_adj, y_proba)
                 results[name] = metrics
 

@@ -79,7 +79,7 @@ def main():
         # Use default classifiers for those not in best_estimators
         for name in config['classifiers']:
             if name not in best_estimators:
-                logger.info("Using default classifier for %s", name)
+                logger.info("Using default parameters for %s", name)
                 best_estimators[name] = all_classifiers[name]
 
         # Cross-validation

@@ -47,6 +47,7 @@ def setup_logger(name, log_file='results.log', console_level=logging.INFO, file_
     logger.propagate = False  # Preventing the logger from propagating messages to ancestor loggers
     return logger
 
+
 def log_memory_usage(logger):
     """
     Logs the current memory usage of the process.
@@ -56,4 +57,5 @@ def log_memory_usage(logger):
     """
     process = psutil.Process(os.getpid())
     memory_usage = process.memory_info().rss / (1024 ** 2)  # Convert bytes to MB
-    logger.debug(f"Current memory usage: {memory_usage:.2f} MB")
+    logger.info(f"Current memory usage: {memory_usage:.2f} MB")
+

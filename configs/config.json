@@ -1,16 +1,14 @@
 {
-  "classifiers": ["Neural Network","XGBoost","MLP","Random Forest","KNN"],
+  "classifiers": ["MLP","XGBoost"],
   "tuned_parameters": {
     "XGBoost": {},
     "Neural Network": {}
   },
   "hyperparameter_tuning": false,
-  "cross_validation": true,
-  "ensemble": false,
+  "cross_validation": false,
+  "ensemble": true,
   "voting": "soft",
   "resampling": ["SMOTE"],
-  "resampling_params": {
-    "k_neighbors": [4]  
-  },
+  "resampling_params": {},
   "scaling": true 
 }

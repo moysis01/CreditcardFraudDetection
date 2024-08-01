@@ -2,7 +2,7 @@ import os
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
-from sklearn.metrics import ConfusionMatrixDisplay, roc_curve, roc_auc_score, precision_recall_curve
+from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix, roc_curve, roc_auc_score, precision_recall_curve
 from utils import setup_logger
 
 # Setup logger
@@ -110,7 +110,11 @@ def plot_training_results(results, X_train, y_test, best_estimators, save_path='
             if hasattr(clf, 'named_steps') and 'classifier' in clf.named_steps:
                 clf = clf.named_steps['classifier']
             if hasattr(clf, 'feature_importances_') or hasattr(clf, 'coef_'):
-                plot_feature_importance(clf, X_train.columns, name, save_path)
+                if isinstance(X_train, pd.DataFrame):
+                    feature_names = X_train.columns
+                else:
+                    feature_names = [f'Feature {i}' for i in range(X_train.shape[1])]
+                plot_feature_importance(clf, feature_names, name, save_path)
             else:
                 logger.warning(f"Classifier {name} does not have feature importances or coefficients. Skipping feature importance plot.")
         except KeyError:
@@ -141,3 +145,34 @@ def plot_cross_validation_results(cv_results, X_train, feature_names, best_estim
                 logger.warning(f"Classifier {name} does not have feature importances or coefficients. Skipping feature importance plot.")
         except KeyError:
             logger.warning(f"Classifier {name} not found in best_estimators. Skipping feature importance plot.")
+
+def plot_training_history(history, save_dir):
+    plt.figure(figsize=(12, 4))
+    plt.subplot(1, 2, 1)
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
+    plt.title('Model accuracy')
+    plt.ylabel('Accuracy')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Validation'], loc='upper left')
+    plt.savefig(os.path.join(save_dir, 'model_accuracy.png'))
+
+    plt.subplot(1, 2, 2)
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('Model loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Validation'], loc='upper left')
+    plt.savefig(os.path.join(save_dir, 'model_loss.png'))
+    plt.close()
+
+def plot_nn_confusion_matrix(y_true, y_pred, save_dir):
+    conf_matrix = confusion_matrix(y_true, y_pred)
+    plt.figure(figsize=(10, 7))
+    sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues')
+    plt.title('Confusion Matrix')
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.savefig(os.path.join(save_dir, 'confusion_matrix.png'))
+    plt.close()
