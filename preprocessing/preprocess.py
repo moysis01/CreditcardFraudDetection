@@ -67,7 +67,7 @@ def preprocess_data(df, config, random_state=25):
         y = df['Class']
         logger.info(f"Separated features and target. X shape: {X.shape}, y shape: {y.shape}")
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=random_state, stratify=y)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=random_state, stratify=y)
         logger.info(f"Data split into train and test sets. X_train shape: {X_train.shape}, X_test shape: {X_test.shape}, y_train shape: {y_train.shape}, y_test shape: {y_test.shape}")
         logger.info(f"Class distribution before resampling: {y_train.value_counts().to_dict()}")
 

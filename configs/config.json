@@ -1,5 +1,5 @@
 {
-  "classifiers": ["MLP","XGBoost"],
+  "classifiers": ["MLP","XGBoost","Random Forest","Neural Network"],
   "tuned_parameters": {
     "XGBoost": {},
     "Neural Network": {}
