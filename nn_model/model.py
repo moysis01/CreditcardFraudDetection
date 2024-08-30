@@ -7,7 +7,6 @@ from sklearn.utils.class_weight import compute_class_weight
 from sklearn.base import BaseEstimator, ClassifierMixin
 import numpy as np
 from kerastuner.tuners import Hyperband
-from kerastuner import HyperParameters
 
 def build_model(hp=None, input_shape=(29, 1)):
     """
@@ -21,17 +20,14 @@ def build_model(hp=None, input_shape=(29, 1)):
     - model (tf.keras.Model): Compiled Keras model.
     """
     model = Sequential()
-    
-    model.add(Input(shape=input_shape))  # Add an explicit Input layer
-    
+    model.add(Input(shape=input_shape))
     if hp is not None:
-        # Using hyperparameters from tuning with reduced range
-        filters = hp.Int('filters', min_value=32, max_value=64, step=32)  # Reduced max_value
-        dropout_conv = hp.Float('dropout_conv', min_value=0.2, max_value=0.4, step=0.1)  # Reduced max dropout
-        num_conv_layers = 1  # Fixed number of conv layers to simplify
-        dense_units = hp.Int('units', min_value=32, max_value=64, step=32)  # Reduced max_value
-        dropout_dense = 0.3  # Fixed dropout rate to reduce tuning complexity
-        learning_rate = hp.Choice('learning_rate', values=[1e-3, 1e-4])  # Reduced number of learning rates
+        filters = hp.Int('filters', min_value=32, max_value=64, step=32)  
+        dropout_conv = hp.Float('dropout_conv', min_value=0.2, max_value=0.4, step=0.1)  
+        num_conv_layers = 1  
+        dense_units = hp.Int('units', min_value=32, max_value=64, step=32) 
+        dropout_dense = 0.3  
+        learning_rate = hp.Choice('learning_rate', values=[1e-3, 1e-4])  
     else:
         # Default values
         filters = 32
@@ -41,14 +37,11 @@ def build_model(hp=None, input_shape=(29, 1)):
         dropout_dense = 0.3
         learning_rate = 0.001
     
-    # First Conv1D layer without input_shape (handled by Input layer)
     model.add(Conv1D(filters=filters, kernel_size=3, activation='relu', padding='same'))
     model.add(BatchNormalization())
     model.add(MaxPooling1D(pool_size=2))
     model.add(Dropout(dropout_conv))
     
-    # Optional additional Conv1D layers
-    # Kept as fixed number for simplicity
     if num_conv_layers > 1:
         for i in range(num_conv_layers - 1):
             model.add(Conv1D(filters=filters, kernel_size=3, activation='relu', padding='same'))
@@ -82,16 +75,15 @@ def tune_hyperparameters(directory, project_name, X_train, y_train):
     tuner = Hyperband(
         build_model,
         objective='val_accuracy',
-        max_epochs=20,  # Reduced maximum epochs
-        factor=4,  # Increased factor to reduce trials in subsequent rounds
+        max_epochs=20, 
+        factor=4,  
         directory=directory,
         project_name=project_name,
-        overwrite=False  # Overwrite existing tuner files for new tuning
+        overwrite=False  
     )
 
     early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
-    tuner.search(X_train, y_train, epochs=20, validation_split=0.2, callbacks=[early_stopping])  # Reduced epochs for initial search
-
+    tuner.search(X_train, y_train, epochs=20, validation_split=0.2, callbacks=[early_stopping]) 
     best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
     return best_hps
 
@@ -116,7 +108,7 @@ def load_best_hyperparameters(directory, project_name):
         overwrite=False  # Do not overwrite existing tuner files
     )
     
-    tuner.reload()  # Reload the tuner to get the best hyperparameters
+    tuner.reload() 
     best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
     return best_hps
 

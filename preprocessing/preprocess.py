@@ -44,7 +44,6 @@ sampler_classes = {
     # Oversampling
     "SMOTE": SMOTE,
     "ROS": RandomOverSampler,
-    "ADASYN": ADASYN,
 
     # Undersampling
     "RUS": RandomUnderSampler,

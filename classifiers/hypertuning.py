@@ -4,15 +4,12 @@ def hyperparameter_tuning(X_train, y_train, config, logger):
     from sklearn.metrics import make_scorer, f1_score
     from classifiers.utils import calculate_n_iter, get_stratified_kfold
     from classifiers.classifier_init import all_classifiers
-    from preprocessing import all_scalers, sampler_classes
+    from preprocessing import sampler_classes
     from utils.logger import log_memory_usage, setup_logger
     import time
-    # Set up logger
+
     logger = setup_logger(__name__)
-
-    # Create a scorer object
-    f1_scorer = make_scorer(f1_score, average='binary')
-
+    f1_scorer = make_scorer(f1_score, average='binary') #scorer obj
     """
     Performs hyperparameter tuning for the specified classifiers using RandomizedSearchCV.
 
@@ -30,17 +27,19 @@ def hyperparameter_tuning(X_train, y_train, config, logger):
     best_estimators = {}
     resampling_methods = config.get('resampling', [])
     resampling_params = config.get('resampling_params', {})
-    scaler_name = config.get('scaling', None)
-    cv_strategy = get_stratified_kfold()  # Ensure this function is defined and imported
+    cv_strategy = get_stratified_kfold()
 
     for name in selected_classifiers:
         logger.info(f"Processing classifier: {name}")
 
-        # Define the steps of the pipeline
-        steps = []
+        if name not in tuned_parameters:  # Skiping not specified classifiers 
+            logger.info(f"Skipping hyperparameter tuning for {name} as it's not specified in config.")
+            best_estimators[name] = all_classifiers[name]  # Use the default classifier without tuning
+            continue
 
-        # Add resampling step if specified
-        for method in resampling_methods:
+        steps = []        #steps of the pipeline
+
+        for method in resampling_methods:        #resampling step if specified
             sampler_class = sampler_classes.get(method.upper())
             if not sampler_class:
                 raise ValueError(f"Invalid resampling method '{method}' in config.")
@@ -50,18 +49,8 @@ def hyperparameter_tuning(X_train, y_train, config, logger):
             sampler = sampler_class(**method_params)
             steps.append(('resampling', sampler))
 
-        # Add scaler step if specified
-        if scaler_name:
-            scaler_class = all_scalers.get(scaler_name)
-            if not scaler_class:
-                raise ValueError(f"Invalid scaler '{scaler_name}' in config.")
-            steps.append(('scaler', scaler_class))
-
-        # Add classifier step
-        steps.append(('classifier', all_classifiers[name]))
+        steps.append(('classifier', all_classifiers[name]))        #classifier steps
         pipeline = ImbPipeline(steps=steps)
-
-        # Prepare parameter distributions for tuning
         param_distributions = {}
         if name in tuned_parameters:
             param_distributions.update({f'classifier__{key}': value for key, value in tuned_parameters[name].items()})
@@ -99,7 +88,7 @@ def hyperparameter_tuning(X_train, y_train, config, logger):
                 best_estimators[name] = random_search.best_estimator_
 
                 # Log the best parameters
-                logger.info("Best parameters for %s:", name)
+                logger.info("Results of Best parameters for %s:", name)
                 best_params = random_search.best_params_
                 for param, value in best_params.items():
                     logger.info(f"  {param}: {value}")

@@ -34,21 +34,16 @@ def cross_validate_models(X: pd.DataFrame, y: pd.Series, config: dict, logger: l
     """
     selected_classifiers = config['classifiers']
     skf = get_stratified_kfold()
-
     if not best_estimators:
         best_estimators = {}
-
     resampling_methods = config.get('resampling', [])
     resampling_params = config.get('resampling_params', {})
-
     cv_results = {}
-
     for name in selected_classifiers:
         logger.info(f"Cross-validating {name}...")
         log_memory_usage(logger)
-
         if name == "Neural Network":
-            # Special handling for Neural Network model
+            #handling for Neural Network model
             model = build_model()
             epochs = 200
             batch_size = 2048
@@ -59,14 +54,10 @@ def cross_validate_models(X: pd.DataFrame, y: pd.Series, config: dict, logger: l
             cv_results[name] = cross_validate_neural_network(model, X, y, skf, epochs, batch_size, 
                                                             [early_stopping, reduce_lr, checkpoint], logger)
             continue
-
-        # Handling for other classifiers
         clf = best_estimators.get(name)
-
         if clf is None:
             logger.warning(f"No tuned model found for {name}. Using default classifier with pipeline.")
             steps = []
-
             # Apply resampling methods if specified
             for method in resampling_methods:
                 sampler_class = sampler_classes.get(method.upper())
@@ -74,12 +65,9 @@ def cross_validate_models(X: pd.DataFrame, y: pd.Series, config: dict, logger: l
                     raise ValueError(f"Invalid resampling method '{method}' specified in config.")
                 method_params = {key: resampling_params[key] for key in resampling_params if key in sampler_class._parameters}
                 steps.append(('resampler', sampler_class(**method_params)))
-
             steps.append(('classifier', all_classifiers[name]))
             clf = ImbPipeline(steps=steps)
-
         cv_results[name] = cross_validate_classifier(clf, X, y, skf, name, logger)
-
     return cv_results
 
 

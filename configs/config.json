@@ -1,14 +1,26 @@
 {
-  "classifiers": ["Neural Network","XGBoost"],
+  "classifiers": ["Neural Network", "XGBoost", "MLP", "Random Forest"],
   "tuned_parameters": {
-    "XGBoost": {},
-    "Neural Network": {}
+    "XGBoost": {
+      "n_estimators": [50, 100, 200]
+    
+    },
+    "MLP": {
+      "hidden_layer_sizes": [[50], [100], [50, 50]]
+
+    },
+    "Random Forest": {
+      "n_estimators": [100, 200, 500]
+
+    }
   },
-  "hyperparameter_tuning": false,
+  "hyperparameter_tuning": true,
   "cross_validation": true,
   "ensemble": true,
   "voting": "soft",
   "resampling": ["SMOTE"],
-  "resampling_params": {},
+  "resampling_params": {
+    "k_neighbors": [4,7]
+  },
   "scaling": true 
 }
