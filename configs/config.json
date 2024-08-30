@@ -1,11 +1,11 @@
 {
-  "classifiers": ["MLP","XGBoost","Random Forest","Neural Network"],
+  "classifiers": ["Neural Network","XGBoost"],
   "tuned_parameters": {
     "XGBoost": {},
     "Neural Network": {}
   },
   "hyperparameter_tuning": false,
-  "cross_validation": false,
+  "cross_validation": true,
   "ensemble": true,
   "voting": "soft",
   "resampling": ["SMOTE"],

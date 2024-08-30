@@ -1,11 +1,14 @@
+# cnn hypertuning path  
+DIRECTORY_PATH = "C:\\Users\\ke1no\\Downloads\\tuning"
+PROJECT_NAME = "creditcard_fraud"
+
 from classifiers.utils import find_best_threshold, adjusted_prediction, calculate_metrics
-from nn_model.model import DNNClassifier
+from nn_model.model import DNNClassifier, load_best_hyperparameters, tune_hyperparameters
 from utils.logger import setup_logger
 from classifiers.classifier_init import all_classifiers
 import time
-import numpy as np
 import pandas as pd
-
+import numpy as np
 from utils.plotter import plot_training_history 
 
 logger = setup_logger(__name__)
@@ -73,17 +76,28 @@ def training(X_train, X_test, y_train, y_test, best_estimators, config):
         logger.info(f"Starting training for {name}...")
         
         if name == 'Neural Network':
-            # Convert DataFrame to NumPy array and reshape for neural network
+            # Converting DataFrame to NumPy array and reshape for neural network
             X_train_nn = X_train.values.reshape((X_train.shape[0], X_train.shape[1], 1)) if isinstance(X_train, pd.DataFrame) else X_train.reshape((X_train.shape[0], X_train.shape[1], 1))
             X_test_nn = X_test.values.reshape((X_test.shape[0], X_test.shape[1], 1)) if isinstance(X_test, pd.DataFrame) else X_test.reshape((X_test.shape[0], X_test.shape[1], 1))
-            dnn_clf = DNNClassifier(input_shape=(29, 1))
+
+            # Tuning the hyperparameters if not already tuned
+            best_hps = tune_hyperparameters(DIRECTORY_PATH, PROJECT_NAME, X_train_nn, y_train)
+
+            # Initialize DNNClassifier with the best hyperparameters
+            dnn_clf = DNNClassifier(input_shape=(29, 1), best_hps=best_hps)
             dnn_clf.fit(X_train_nn, y_train)
-            plot_training_history(dnn_clf.model.history, save_dir='plots')
+            
+            # Plotting training history
+            if hasattr(dnn_clf.model, 'history'):
+                plot_training_history(dnn_clf.model.history, save_dir='plots')
+
+            # Predict and adjust predictions based on the best threshold
             y_proba = dnn_clf.predict_proba(X_test_nn)[:, 1]
             best_threshold = find_best_threshold(y_test, y_proba)
             y_pred_adj = (y_proba >= best_threshold).astype(int)
             metrics = calculate_metrics(y_test, y_pred_adj, y_proba)
             results[name] = metrics
+
         else:
             try:
                 clf = best_estimators.get(name)
@@ -94,7 +108,7 @@ def training(X_train, X_test, y_train, y_test, best_estimators, config):
                     if clf is None:
                         raise ValueError(f"Classifier {name} is not available in all_classifiers.")
 
-                # Ensure X_train and X_test are 2D for non-neural network classifiers
+                #  X_train and X_test being 2D for non-neural network classifiers
                 if len(X_train.shape) > 2:
                     X_train_reshaped = X_train.reshape(X_train.shape[0], -1)
                     X_test_reshaped = X_test.reshape(X_test.shape[0], -1)

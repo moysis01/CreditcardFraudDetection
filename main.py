@@ -116,6 +116,7 @@ def main():
 
         # Ensemble Voting Classifier
         if config.get('ensemble'):
+            
             logger.info("Training and evaluating ensemble voting classifier...")
             voting_results = train_and_evaluate_voting_classifier(X_train, X_test, y_train, y_test, best_estimators, config)
             logger.info("Ensemble voting classifier training complete.")

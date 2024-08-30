@@ -10,7 +10,7 @@ from utils.logger import setup_logger
 # Set up logger
 logger = setup_logger(__name__)
 
-def load_data(file_path, use_fraction=False, fraction=0.70):
+def load_data(file_path, use_fraction=False, fraction=0.50):
     """
     Load the data from a CSV file and optionally use a fraction of the data ensuring Class 1 entries are included.
 
@@ -63,7 +63,7 @@ def preprocess_data(df, config, random_state=25):
         df.drop(columns='Time', inplace=True)
         logger.info(f"Dropped duplicates. Original shape: {original_shape}, New shape: {df.shape}")
 
-        X = df.drop(['Class'], axis=1)
+        X = df.drop(['Class'], axis=1)  
         y = df['Class']
         logger.info(f"Separated features and target. X shape: {X.shape}, y shape: {y.shape}")
 
