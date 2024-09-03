@@ -26,19 +26,13 @@ To get started with this project, follow these steps:
    git clone https://github.com/path/creditcardfrauddetection.git
    cd creditcardfrauddetection
 
-2. **Create and activate a virtual environment:**
-python -m venv venv
-source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-
-2. **Install the required dependencies:**
-pip install -r requirements.txt
 
 **Usage**
 To run the project, follow these steps:
 
 1. **Prepare the dataset:**
 
-Place your dataset (e.g., creditcard.csv) in the Dataset-Approved directory.
+Place your dataset (e.g., creditcard.csv) in a disired directory and locate it through main.py
 
 2. **Configure the settings:**
 
@@ -49,18 +43,41 @@ python main.py
 
 4. **View the results:**
 
-The results, including logs and evaluation metrics, will be saved in the results.log file and displayed in the console.
+The progress results will be displayed on console, while performance results including evaluation metrics, will be saved in the results.log file.
+## Project Structure
 
-**Project Structure:**
-1. Description of Key Files and Directories:
-2. Dataset-Approved/: Contains the dataset file.
-3. utils/logger.py: Contains functions for logging output.
-4. utils/plotter.py: Contains functions for plotting graphs and visualizations.
-5. preprocessing/preprocess.py: Contains functions for data loading and preprocessing.
-6. models/classifiers.py: Contains functions for training and evaluating classifiers.
-7. models/ensemble.py: Contains functions for training and evaluating ensemble classifiers.
-8. main.py: The main script to run the project.
-9. classifiers_config.json: Configuration file for specifying classifiers , their parameters , crossvalidation and ensemble method.
+The project is organized into several key directories and files, as described below:
+
+- **Dataset**: The dataset can be obtained from kaggle through the this link https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud.
+
+
+- **utils/logger.py**: Contains functions for logging output to the console and files. This module plays a crucial role in monitoring the execution of the scripts.
+
+- **utils/plotter.py**: Contains functions for plotting graphs and visualizations, which are essential for understanding the distribution of data and the performance of models.
+
+- **preprocessing/preprocess.py**: Contains functions for data loading, cleaning, and preprocessing, including handling class imbalances through resampling techniques.
+
+- **classifiers/classifier_init.py**: Responsible for initializing the classifiers based on the configurations provided in the `classifiers_config.json` file.
+
+- **classifiers/cv.py**: Manages cross-validation processes to evaluate model performance.
+
+- **classifiers/ensemble.py**: Handles the implementation of ensemble methods, combining multiple classifiers to improve prediction accuracy.
+
+- **classifiers/hypertuning.py**: Contains functions for hyperparameter tuning, optimizing model parameters to achieve the best possible performance.
+
+- **classifiers/train.py**: The main training module where models are trained, validated, and tested.
+
+- **classifiers/utils.py**: Utility functions used across different parts of the project, including data splitting, metric calculations, and more.
+
+- **nn_model/model.py**: Contains the implementation of a neural network model specifically designed for this project.
+
+- **main.py**: The main script that ties everything together, executing the entire workflow from data preprocessing to model evaluation.
+
+- **configs/config.json**: Configuration file where you can specify the classifiers, their parameters, cross-validation settings, ensemble methods, and resampling methods.
+
+
+
+
 
 
 
