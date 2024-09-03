@@ -2,7 +2,7 @@ import time
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import RobustScaler, StandardScaler
-from imblearn.over_sampling import (SMOTE, ADASYN, RandomOverSampler)
+from imblearn.over_sampling import (SMOTE, RandomOverSampler)
 from imblearn.under_sampling import (RandomUnderSampler, NearMiss,)
 from imblearn.combine import SMOTETomek
 from utils.logger import setup_logger
@@ -10,7 +10,7 @@ from utils.logger import setup_logger
 # Set up logger
 logger = setup_logger(__name__)
 
-def load_data(file_path, use_fraction=False, fraction=0.50):
+def load_data(file_path, use_fraction=False, fraction=0.10):
     """
     Load the data from a CSV file and optionally use a fraction of the data ensuring Class 1 entries are included.
 

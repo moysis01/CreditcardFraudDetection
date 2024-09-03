@@ -8,7 +8,7 @@ from classifiers.train import training
 from utils import setup_logger, log_memory_usage
 from preprocessing import load_data, preprocess_data
 from classifiers.classifier_init import all_classifiers
-from utils.plotter import plot_training_results, plot_cross_validation_results
+from utils.plotter import plot_combined_precision_recall_curve, plot_combined_roc_curve, plot_training_results, plot_cross_validation_results
 
 # Initialize logger
 logger = setup_logger(__name__, log_file='results.log', console_level=logging.INFO, file_level=logging.INFO)
@@ -94,6 +94,8 @@ def main():
             logger.info(f"Results for {name} Accuracy: {metrics.get('accuracy', 'N/A'):.4f}, Precision: {metrics.get('precision', 'N/A'):.4f}, Recall: {metrics.get('recall', 'N/A'):.4f}, F1 Score: {metrics.get('f1_score', 'N/A'):.4f}, ROC AUC: {metrics.get('roc_auc', 'N/A'):.4f}, MCC: {metrics.get('mcc', 'N/A'):.4f}")
         plot_training_results(results, X_train, y_test, best_estimators)
 
+
+        
         # Ensemble Voting Classifier
         if config.get('ensemble'):
             
@@ -109,9 +111,13 @@ def main():
                 logger.info(f"Results for Ensemble Voting Classifier Classification Report:\n{metrics.get('classification_report', 'N/A')}")
                 logger.info(f"Results for Ensemble Voting Classifier Confusion Matrix:\n{metrics.get('confusion_matrix', 'N/A')}")
                 logger.info(f"Results for Ensemble Voting Classifier Accuracy: {metrics.get('accuracy', 'N/A'):.4f}, Precision: {metrics.get('precision', 'N/A'):.4f}, Recall: {metrics.get('recall', 'N/A'):.4f}, F1 Score: {metrics.get('f1_score', 'N/A'):.4f}, ROC AUC: {metrics.get('roc_auc', 'N/A'):.4f}, MCC: {metrics.get('mcc', 'N/A'):.4f}")
-
+                    
+                 
                 # Plot Ensemble results
                 plot_training_results(voting_results, X_train, y_test, best_estimators)
+                results.update(voting_results) 
+                plot_combined_roc_curve(results, y_test, save_path='plots')
+                plot_combined_precision_recall_curve(results, y_test, save_path='plots')
                 logger.info("Ensemble results plotted.")
                 log_memory_usage(logger)
 

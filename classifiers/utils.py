@@ -36,7 +36,7 @@ def adjusted_prediction(clf, X, threshold=0.5):
     y_pred_adj = (y_pred_prob >= threshold).astype(int)
     return y_pred_adj
 
-def get_stratified_kfold(random_state=25, n_splits=3):
+def get_stratified_kfold(random_state=25, n_splits=5):
     from sklearn.model_selection import StratifiedKFold
     """
     Get a StratifiedKFold object with the specified random state and number of splits.

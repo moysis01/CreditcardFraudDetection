@@ -2,7 +2,7 @@ import os
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
-from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix, roc_curve, roc_auc_score, precision_recall_curve
+from sklearn.metrics import ConfusionMatrixDisplay, auc, confusion_matrix, roc_curve, roc_auc_score, precision_recall_curve
 from utils import setup_logger
 
 # Setup logger
@@ -10,38 +10,58 @@ logger = setup_logger(__name__)
 save_path = 'plots'
 os.makedirs(save_path, exist_ok=True)  # Create the directory if it doesn't exist
 
-def plot_roc_curve(y_test, y_proba, classifier_name, save_path):
-    fpr, tpr, _ = roc_curve(y_test, y_proba)
+
+def plot_combined_roc_curve(results, y_test, save_path):
+    """
+    Plot the ROC curve for all classifiers in one figure for comparison.
+
+    Parameters:
+    - results (dict): A dictionary where keys are classifier names and values are dictionaries with 'y_proba' keys.
+    - y_test (array-like): True labels for the test set.
+    - save_path (str): Directory path where the plot will be saved.
+    """
     plt.figure(figsize=(10, 6))
-    plt.plot(fpr, tpr, label=f'AUC = {roc_auc_score(y_test, y_proba):.2f}')
-    plt.plot([0, 1], [0, 1], 'k--')
+    
+    for classifier_name, metrics in results.items():
+        y_proba = metrics['y_proba']
+        fpr, tpr, _ = roc_curve(y_test, y_proba)
+        auc = roc_auc_score(y_test, y_proba)
+        plt.plot(fpr, tpr, label=f'{classifier_name} (AUC = {auc:.2f})')
+
+    plt.plot([0, 1], [0, 1], 'k--', label='Random Chance')
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
-    plt.title(f'ROC Curve - {classifier_name}')
+    plt.title('ROC Curves for All Classifiers')
     plt.legend(loc='lower right')
-    plt.savefig(os.path.join(save_path, f"roc_curve_{classifier_name}.png")) 
+    plt.savefig(os.path.join(save_path, "combined_roc_curve.png")) 
     plt.close()
 
-def plot_precision_recall_curve(y_test, y_proba, classifier_name, save_path):
-    precision, recall, _ = precision_recall_curve(y_test, y_proba)
+
+
+def plot_combined_precision_recall_curve(results, y_test, save_path):
+    """
+    Plot the Precision-Recall curve for all classifiers in one figure for comparison.
+
+    Parameters:
+    - results (dict): A dictionary where keys are classifier names and values are dictionaries with 'y_proba' keys.
+    - y_test (array-like): True labels for the test set.
+    - save_path (str): Directory path where the plot will be saved.
+    """
     plt.figure(figsize=(10, 6))
-    plt.plot(recall, precision, label=f'AP = {precision.mean():.2f}')
+
+    for classifier_name, metrics in results.items():
+        y_proba = metrics['y_proba']
+        precision, recall, _ = precision_recall_curve(y_test, y_proba)
+        pr_auc = auc(recall, precision)
+        plt.plot(recall, precision, label=f'{classifier_name} (PR AUC = {pr_auc:.2f})')
+
     plt.xlabel('Recall')
     plt.ylabel('Precision')
-    plt.title(f'Precision-Recall Curve - {classifier_name}')
+    plt.title('Precision-Recall Curves for All Classifiers')
     plt.legend(loc='lower left')
-    plt.savefig(os.path.join(save_path, f"precision_recall_curve_{classifier_name}.png")) 
+    plt.savefig(os.path.join(save_path, "combined_precision_recall_curve.png")) 
     plt.close()
 
-def plot_roc_pr_curves(y_test, y_proba, classifier_name, save_path):
-    plt.figure(figsize=(12, 5))
-    plt.subplot(1, 2, 1)
-    plot_roc_curve(y_test, y_proba, classifier_name, save_path)
-    plt.subplot(1, 2, 2)
-    plot_precision_recall_curve(y_test, y_proba, classifier_name, save_path)
-    plt.tight_layout()
-    plt.savefig(os.path.join(save_path, f"roc_pr_curves_{classifier_name}.png"))
-    plt.close()
 
 def save_distribution_plots(X_train, X_test, feature_names, save_path):
     for column in feature_names:

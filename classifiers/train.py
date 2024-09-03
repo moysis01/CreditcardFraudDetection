@@ -79,7 +79,9 @@ def training(X_train, X_test, y_train, y_test, best_estimators, config):
             # Converting DataFrame to NumPy array and reshape for neural network
             X_train_nn = X_train.values.reshape((X_train.shape[0], X_train.shape[1], 1)) if isinstance(X_train, pd.DataFrame) else X_train.reshape((X_train.shape[0], X_train.shape[1], 1))
             X_test_nn = X_test.values.reshape((X_test.shape[0], X_test.shape[1], 1)) if isinstance(X_test, pd.DataFrame) else X_test.reshape((X_test.shape[0], X_test.shape[1], 1))
-
+            
+            logger.info(f"X_train_nn shape: {X_train_nn.shape}")
+            logger.info(f"y_train shape: {y_train.shape}")            
             # Tuning the hyperparameters if not already tuned
             best_hps = tune_hyperparameters(DIRECTORY_PATH, PROJECT_NAME, X_train_nn, y_train)
 

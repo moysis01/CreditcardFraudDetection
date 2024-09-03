@@ -1,78 +1,5 @@
-2024-08-30 12:11:54,291 - __main__ - INFO - Results for Cross-validation Neural Network: Mean accuracies: 0.9994
-2024-08-30 12:11:54,291 - __main__ - INFO - Results for Cross-validation Neural Network: Mean precisions: 0.8286
-2024-08-30 12:11:54,291 - __main__ - INFO - Results for Cross-validation Neural Network: Mean recalls: 0.7780
-2024-08-30 12:11:54,291 - __main__ - INFO - Results for Cross-validation Neural Network: Mean f1_scores: 0.8023
-2024-08-30 12:11:54,291 - __main__ - INFO - Results for Cross-validation Neural Network: Mean roc_aucs: 0.9856
-2024-08-30 12:11:54,291 - __main__ - INFO - Results for Cross-validation Neural Network: Mean mccs: 0.8025
-2024-08-30 12:11:54,293 - __main__ - INFO - Results for Cross-validation XGBoost: Mean accuracies: 0.9995
-2024-08-30 12:11:54,293 - __main__ - INFO - Results for Cross-validation XGBoost: Mean precisions: 0.8338
-2024-08-30 12:11:54,293 - __main__ - INFO - Results for Cross-validation XGBoost: Mean recalls: 0.8372
-2024-08-30 12:11:54,293 - __main__ - INFO - Results for Cross-validation XGBoost: Mean f1_scores: 0.8355
-2024-08-30 12:11:54,293 - __main__ - INFO - Results for Cross-validation XGBoost: Mean roc_aucs: 0.9736
-2024-08-30 12:11:54,293 - __main__ - INFO - Results for Cross-validation XGBoost: Mean mccs: 0.8352
-2024-08-30 12:11:54,294 - __main__ - INFO - Results for Cross-validation MLP: Mean accuracies: 0.9991
-2024-08-30 12:11:54,294 - __main__ - INFO - Results for Cross-validation MLP: Mean precisions: 0.7084
-2024-08-30 12:11:54,294 - __main__ - INFO - Results for Cross-validation MLP: Mean recalls: 0.7886
-2024-08-30 12:11:54,294 - __main__ - INFO - Results for Cross-validation MLP: Mean f1_scores: 0.7460
-2024-08-30 12:11:54,294 - __main__ - INFO - Results for Cross-validation MLP: Mean roc_aucs: 0.9571
-2024-08-30 12:11:54,294 - __main__ - INFO - Results for Cross-validation MLP: Mean mccs: 0.7468
-2024-08-30 12:11:54,296 - __main__ - INFO - Results for Cross-validation Random Forest: Mean accuracies: 0.9995
-2024-08-30 12:11:54,296 - __main__ - INFO - Results for Cross-validation Random Forest: Mean precisions: 0.8768
-2024-08-30 12:11:54,296 - __main__ - INFO - Results for Cross-validation Random Forest: Mean recalls: 0.8119
-2024-08-30 12:11:54,296 - __main__ - INFO - Results for Cross-validation Random Forest: Mean f1_scores: 0.8431
-2024-08-30 12:11:54,296 - __main__ - INFO - Results for Cross-validation Random Forest: Mean roc_aucs: 0.9721
-2024-08-30 12:11:54,296 - __main__ - INFO - Results for Cross-validation Random Forest: Mean mccs: 0.8435
-2024-08-30 12:35:18,502 - __main__ - INFO - 
-Results for Neural Network:
-2024-08-30 12:35:18,502 - __main__ - INFO - Results for Neural Network Classification Report:
-              precision    recall  f1-score   support
-
-           0       1.00      1.00      1.00     56651
-           1       0.80      0.78      0.79        95
-
-    accuracy                           1.00     56746
-   macro avg       0.90      0.89      0.90     56746
-weighted avg       1.00      1.00      1.00     56746
-
-2024-08-30 12:35:18,506 - __main__ - INFO - Results for Neural Network Confusion Matrix:
-[[56633    18]
- [   21    74]]
-2024-08-30 12:35:18,506 - __main__ - INFO - Results for Neural Network Accuracy: 0.9993, Precision: 0.8043, Recall: 0.7789, F1 Score: 0.7914, ROC AUC: 0.9635, MCC: 0.7912
-2024-08-30 12:35:18,506 - __main__ - INFO - 
-Results for XGBoost:
-2024-08-30 12:35:18,506 - __main__ - INFO - Results for XGBoost Classification Report:
-              precision    recall  f1-score   support
-
-           0       1.00      1.00      1.00     56651
-           1       0.96      0.84      0.90        95
-
-    accuracy                           1.00     56746
-   macro avg       0.98      0.92      0.95     56746
-weighted avg       1.00      1.00      1.00     56746
-
-2024-08-30 12:35:18,506 - __main__ - INFO - Results for XGBoost Confusion Matrix:
-[[56648     3]
- [   15    80]]
-2024-08-30 12:35:18,506 - __main__ - INFO - Results for XGBoost Accuracy: 0.9997, Precision: 0.9639, Recall: 0.8421, F1 Score: 0.8989, ROC AUC: 0.9740, MCC: 0.9008
-2024-08-30 12:35:18,506 - __main__ - INFO - 
-Results for MLP:
-2024-08-30 12:35:18,506 - __main__ - INFO - Results for MLP Classification Report:
-              precision    recall  f1-score   support
-
-           0       1.00      1.00      1.00     56651
-           1       0.90      0.77      0.83        95
-
-    accuracy                           1.00     56746
-   macro avg       0.95      0.88      0.91     56746
-weighted avg       1.00      1.00      1.00     56746
-
-2024-08-30 12:35:18,507 - __main__ - INFO - Results for MLP Confusion Matrix:
-[[56643     8]
- [   22    73]]
-2024-08-30 12:35:18,507 - __main__ - INFO - Results for MLP Accuracy: 0.9995, Precision: 0.9012, Recall: 0.7684, F1 Score: 0.8295, ROC AUC: 0.9575, MCC: 0.8319
-2024-08-30 12:35:18,507 - __main__ - INFO - 
 Results for Random Forest:
-2024-08-30 12:35:18,507 - __main__ - INFO - Results for Random Forest Classification Report:
+2024-09-02 22:43:13,654 - __main__ - INFO - Results for Random Forest Classification Report:
               precision    recall  f1-score   support
 
            0       1.00      1.00      1.00     56651
@@ -82,23 +9,70 @@ Results for Random Forest:
    macro avg       0.94      0.93      0.94     56746
 weighted avg       1.00      1.00      1.00     56746
 
-2024-08-30 12:35:18,507 - __main__ - INFO - Results for Random Forest Confusion Matrix:
+2024-09-02 22:43:13,654 - __main__ - INFO - Results for Random Forest Confusion Matrix:
 [[56640    11]
  [   13    82]]
-2024-08-30 12:35:18,507 - __main__ - INFO - Results for Random Forest Accuracy: 0.9996, Precision: 0.8817, Recall: 0.8632, F1 Score: 0.8723, ROC AUC: 0.9677, MCC: 0.8722
-2024-08-30 13:09:06,020 - __main__ - INFO - 
-Results for Ensemble Voting Classifier:
-2024-08-30 13:09:06,020 - __main__ - INFO - Results for Ensemble Voting Classifier Classification Report:
+2024-09-02 22:43:13,654 - __main__ - INFO - Results for Random Forest Accuracy: 0.9996, Precision: 0.8817, Recall: 0.8632, F1 Score: 0.8723, ROC AUC: 0.9745, MCC: 0.8722
+
+Results for MLP:
+2024-09-02 22:43:13,654 - __main__ - INFO - Results for MLP Classification Report:
               precision    recall  f1-score   support
 
            0       1.00      1.00      1.00     56651
-           1       0.90      0.85      0.88        95
+           1       0.91      0.81      0.86        95
 
     accuracy                           1.00     56746
-   macro avg       0.95      0.93      0.94     56746
+   macro avg       0.95      0.91      0.93     56746
 weighted avg       1.00      1.00      1.00     56746
 
-2024-08-30 13:09:06,020 - __main__ - INFO - Results for Ensemble Voting Classifier Confusion Matrix:
-[[56642     9]
- [   14    81]]
-2024-08-30 13:09:06,020 - __main__ - INFO - Results for Ensemble Voting Classifier Accuracy: 0.9996, Precision: 0.9000, Recall: 0.8526, F1 Score: 0.8757, ROC AUC: 0.9743, MCC: 0.8758
+2024-09-02 22:43:13,654 - __main__ - INFO - Results for MLP Confusion Matrix:
+[[56643     8]
+ [   18    77]]
+2024-09-02 22:43:13,654 - __main__ - INFO - Results for MLP Accuracy: 0.9995, Precision: 0.9059, Recall: 0.8105, F1 Score: 0.8556, ROC AUC: 0.9594, MCC: 0.8567
+Results for XGBoost:
+2024-09-02 22:43:13,654 - __main__ - INFO - Results for XGBoost Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     56651
+           1       0.96      0.83      0.89        95
+
+    accuracy                           1.00     56746
+   macro avg       0.98      0.92      0.95     56746
+weighted avg       1.00      1.00      1.00     56746
+
+2024-09-02 22:43:13,654 - __main__ - INFO - Results for XGBoost Confusion Matrix:
+[[56648     3]
+ [   16    79]]
+2024-09-02 22:43:13,654 - __main__ - INFO - Results for XGBoost Accuracy: 0.9997, Precision: 0.9634, Recall: 0.8316, F1 Score: 0.8927, ROC AUC: 0.9795, MCC: 0.8949
+2024-09-02 22:43:13,654 - __main__ - INFO - 
+Results for Neural Network:
+2024-09-02 22:43:13,654 - __main__ - INFO - Results for Neural Network Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     56651
+           1       0.77      0.82      0.80        95
+
+    accuracy                           1.00     56746
+   macro avg       0.89      0.91      0.90     56746
+weighted avg       1.00      1.00      1.00     56746
+
+2024-09-02 22:43:13,654 - __main__ - INFO - Results for Neural Network Confusion Matrix:
+[[56628    23]
+ [   17    78]]
+2024-09-02 22:43:13,654 - __main__ - INFO - Results for Neural Network Accuracy: 0.9993, Precision: 0.7723, Recall: 0.8211, F1 Score: 0.7959, ROC AUC: 0.9655, MCC: 0.7959
+2024-09-02 23:32:32,524 - __main__ - INFO - 
+Results for Ensemble Voting Classifier:
+2024-09-02 23:32:32,525 - __main__ - INFO - Results for Ensemble Voting Classifier Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     56651
+           1       0.95      0.81      0.88        95
+
+    accuracy                           1.00     56746
+   macro avg       0.98      0.91      0.94     56746
+weighted avg       1.00      1.00      1.00     56746
+
+2024-09-02 23:32:32,526 - __main__ - INFO - Results for Ensemble Voting Classifier Confusion Matrix:
+[[56647     4]
+ [   18    77]]
+2024-09-02 23:32:32,526 - __main__ - INFO - Results for Ensemble Voting Classifier Accuracy: 0.9996, Precision: 0.9506, Recall: 0.8105, F1 Score: 0.8750, ROC AUC: 0.9807, MCC: 0.8776
