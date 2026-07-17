@@ -1,0 +1,22 @@
+pandas
+numpy
+scikit-learn
+imbalanced-learn
+xgboost
+tensorflow
+keras-tuner
+matplotlib
+seaborn
+psutil
+joblib
+
+# Real-time serving platform (antifraud/)
+fastapi
+uvicorn[standard]
+pydantic
+httpx
+pytest
+
+# Reinforcement-learning decision layer (antifraud/rl/)
+torch
+gymnasium

@@ -1,2 +1,11 @@
 
 creditcard.csv
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Model artifacts and tuning output (regenerate via training)
+models/
+tuning/

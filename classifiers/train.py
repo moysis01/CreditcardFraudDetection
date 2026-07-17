@@ -1,5 +1,5 @@
-# cnn hypertuning path  
-DIRECTORY_PATH = "C:\\Users\\ke1no\\Downloads\\tuning"
+# cnn hypertuning path
+DIRECTORY_PATH = "tuning"
 PROJECT_NAME = "creditcard_fraud"
 
 from classifiers.utils import find_best_threshold, adjusted_prediction, calculate_metrics

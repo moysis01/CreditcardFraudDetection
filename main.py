@@ -37,7 +37,7 @@ def main():
 
         # Load dataset
         logger.info("Loading dataset...")
-        path = 'C:\\Users\\ke1no\\OneDrive - Sheffield Hallam University\\Year3\\Disseration\\Dataset-Approved\\creditcard.csv'
+        path = 'creditcard.csv'
         df = load_data(path)
         logger.info("Dataset loaded with shape: %s", df.shape)
         log_memory_usage(logger)
