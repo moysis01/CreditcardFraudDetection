@@ -226,7 +226,7 @@ def train_dqn(env: SequentialCardEnv, episodes: int, seed: int = RANDOM_SEED,
     return agent, history
 
 
-def run(fraction: float, episodes: int, seed: int = RANDOM_SEED):
+def run(fraction: float, episodes: int, seed: int = RANDOM_SEED, plot: bool = True):
     cards, proba, y, amounts, scaled, thr = build_sessions("test", fraction, seed)
     t = thr["cost"]   # aggressive threshold (precision ~0.97) so false positives occur
     print(f"[seq] {len(cards)} synthetic cards, decision threshold={t:.3f}")
@@ -246,7 +246,8 @@ def run(fraction: float, episodes: int, seed: int = RANDOM_SEED):
     results["Dueling DQN"] = eval_policy(make_env(None), agent.act_greedy)
 
     _print_table(results)
-    _plot(results, hist)
+    if plot:
+        _plot(results, hist)
     return results
 
 
